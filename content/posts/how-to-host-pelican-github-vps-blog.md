@@ -330,9 +330,60 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
 4. Sync your local Git repo with GitHub.com.
 
+    &#x27a9; Start by committing the site to a local Git repo.
+
         :::bash
     	# on LOCAL:
-        $ 
+        $ git add .
+        $ git status
+        
+        # On branch master
+        #
+        # Initial commit
+        #
+        # Changes to be committed:
+        #   (use "git rm --cached <file>..." to unstage)
+        #
+        #	new file:   .gitignore
+        #	new file:   Makefile
+        #	new file:   README.md
+        #	new file:   develop_server.sh
+        #	new file:   pelicanconf.py
+        #	new file:   requirements.txt
+        #
+        
+        $ git commit -m "Initial commit of jamesnewbrain.com"
+        $ git status
+
+    &#x27a9; Now let's synchronize our local repo with a remote repo at [GitHub.com] [github].
+
+    &#x27a9; First create an empty repo at [GitHub.com] [github] so that you can get an HTTPS URL to push to from your local machine.  GitHub will provide you with a HTTPS URL like: `https://github.com/jfallisg/jamesnewbrain.git`.
+
+    &#x27a9; Next, add this as the `remote` repository for your local Git repo.
+
+        :::bash
+        # on LOCAL:
+        $ git remote add origin https://github.com/jfallisg/jamesnewbrain.git
+        $ git push -u origin master
+
+    &#x266b; There's a chance you set this up wrong, or make the mistake that I did of copying in the SSH link instead of HTTPS, when you've previously only established credentials to sync with GitHub over HTTPS.  Audit and remediate those issues with the following:
+    
+        :::bash
+        # on LOCAL:
+        $ git remote -v         # to tell you what you have set up as remote
+        $ cat .git/config       # alternative to audit your settings
+        $ git remote rm origin  # to remove previous remote origin from you repo
+
+    &#x27a9; Now that you have established sync with GitHub, from now on, commit changes or new blog posts to your GitHub repo with:
+
+        :::bash
+        # on LOCAL:
+        $ cd ~/dev/jamesnewbrain
+        $ git status
+        $ git add .
+        $ git commit -m "describe changes"
+
+Congrats, your website is all set up locally!
 
 ***
 
@@ -998,6 +1049,12 @@ The timing is good for a backup snapshot of your VPS, because all the software w
     $ sh develop_server.sh stop
 
 ## III. Commit completed post source to GitHub
+
+    :::bash
+	# on LOCAL:
+    $ cd ~/dev/jamesnewbrain
+    $ git add .
+    $ git commit -m "describe changes"
 
 ## IV. Deploy on remote server
 
