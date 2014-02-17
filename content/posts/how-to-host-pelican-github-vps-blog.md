@@ -108,7 +108,7 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
 
 1. Install Python (Mac OS 10.9 already has 2.7.5 installed)
 
-2. Install [pip] [pip], the package manager for Python modules.
+2. Install [`pip`] [pip], the package manager for Python modules.
 
     &#x266b; You're using a `sudo` to install `pip` globally on your machine, since you'll typically want to be able to install/update/uninstall Python modules outside of any specific virtual environment we set up.
 
@@ -118,7 +118,7 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
     	# on LOCAL:
     	$ sudo aptitude install python-pip python-dev
 	
-3. Install [virtualenv] [venv], the Python virtual environment management system.
+3. Install [`virtualenv`] [venv], the Python virtual environment management system.
 
     &#x266b; `virtualenv` allows you to compartmentalize sets of Python modules for specific projects from the globally installed modules on your entire system. This way you can have project-specific versions of modules and manage any conflicts between modules on a project-by-project basis.  It also allows you to sync your "blessed" set of Python modules from your LOCAL machine with your REMOTE machine, which we will do later in this procedure.
 
@@ -164,7 +164,13 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
     	# on LOCAL:
     	$ pip install markdown
 
-    c. You can check what's installed in your virtualenv now with:
+    c. Install [`BeautifulSoup`] [beautsoup], a HTML parser, which we will use later.
+
+        :::bash
+    	# on LOCAL:
+        $ pip install beautifulsoup4
+
+    d. You can check what's installed in your virtualenv now with:
 
         :::bash
     	# on LOCAL:
@@ -175,7 +181,7 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
         MarkupSafe==0.18
         Pygments==1.6
         Unidecode==0.04.14
-        argparse==1.2.1
+        beautifulsoup4==4.3.2
         blinker==1.3
         docutils==0.11
         feedgenerator==1.7
@@ -379,25 +385,28 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
         :::bash
         # on LOCAL:
         $ cd ~/dev/jamesnewbrain
-        $ git status
+        $ git status                        # optional, check for changes
         $ git add .
         $ git commit -m "describe changes"
+        $ git push origin master
 
-Congrats, your website is all set up locally!
+Congrats, your website is all set up locally! Now let's set up our VPS and actually host this thing on the internet!
 
 ***
 
-# PART 2: DigitalOcean VPS configuration and setup to host our Pelican blog
+# PART 2: DigitalOcean VPS setup to host our Pelican blog
+
+Once you've decided on going the VPS route (and not a cloud-based hosting like Amazon EC2), you'll quickly narrow your VPS providers down to either [DigitalOcean] [digitalocean] or [Linode] [linode].  Both have great reps.  For my use case, DigitalOcean provided a dirt cheap $6/month hosting deal which includes automated backups of my server, which won me over.
 
 ## I. Create a DigitalOcean droplet
 
-See [official DigitalOcean tutorial][do_droplet] for more help.
- 
-1. Create Droplet, select a meaningful hostname
+See [official DigitalOcean tutorial] [do_droplet] for more help.
+
+1. From the [DigitalOcean dashboard] [dod], create Droplet, and select a meaningful/memorable **hostname**.
 2. Select size / price plan (I chose their cheapest droplet which gives you 512MB / 1CPU / 20GB SSD / 1TB x-fer for $5 per month).
-3. Select region / datacenter near you
+3. Select region / datacenter near you.
 4. Select distribution (I chose Ubuntu 12.04.3 x64).
-5. We will add our SSH key later in this procedure
+5. We will add our SSH key later in this procedure.
 6. Settings (I chose to enable the following: Enable VirtIO, Private Networking, Backups (for an extra $1 per month)).
 
 DigitalOcean will then spin up your VPS and email you your VPS's IP address, and default root user password.
@@ -408,18 +417,20 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
 
         :::bash
         # on REMOTE:
-        $ ssh root@<your_vps_ip>
+        $ ssh root@your_vps_ip
 
-2. Set hostname and set FQDN
+2. Set hostname and set Fully Qualified Domain Name (FQDN)
 
-    See [this tutorial] [do_sethostname] and [this tutorial] [do_setfqdn] for more.
+    I referenced these DigitalOcean tutorials, [Set Hostname] [do_sethostname] and [Set FQDN] [do_setfqdn].
 
-    a. First check defaults:
+    &#x266b; By default your DigitalOcean droplet's name is your hostname.  I'll refer to these interchangably as `your_hostname`.
+
+    a. First check default hostname:
 
         :::bash
         # on REMOTE:
-        $ hostname      # should be by default the same as droplet name, otherwise edit /etc/hostname
-        $ hostname -f   # should be localhost by default
+        $ hostname      # your_hostname == droplet name by default
+        $ hostname -f   # your currently set FQDN, should be localhost by default
 
     b. Change FQDN to properly reflect our hostname/domain:
 
@@ -427,12 +438,12 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
         # on REMOTE:
         $ nano /etc/hosts
 
-    &#x27a9; Then insert a line at the top of the list like:
+    &#x27a9; Then insert a line *at the top of the list* like:
     
         :::text
-        <your droplet IP>  <your hostname>.<your domain>   <your hostname>
+        your_vps_ip     your_hostname.yourDNSdomain.com     your_hostname
 
-    If it's not at the top of the list, localhost will continue to be returned in FQDN lookup. Verify hostname and FQDN work correctly now with another `$ hostname -f` command.
+    If it's not at the top of the list, localhost will continue to be returned in FQDN lookup. Verify hostname and FQDN work correctly now with another `$ hostname -f` command. You should get `your_hostname.yourDNSdomain.com` back.
 
 3. Configure DNS with DigitalOcean
 
@@ -440,11 +451,11 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
     
     b. On DigitalOcean's dashboard, "Add Domain"
     
-    c. Input <your domain\>, <your droplet's IP address\>, <your droplet's hostname\>.
+    c. Input `yourDNSdomain.com`, `your_vps_ip`, and `your_hostname`.
         
     This will create the A record for your domain.  
         
-    You should end up with a line like: `A       @       <your droplet's IP address>`
+    You should end up with a line like: `A       @       your_vps_ip`
     
     d. Add CNAME records for "www" and wildcard "*" to resolve to default domain level
         `CNAME   www     @`
@@ -459,21 +470,21 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
 
 ## III. Basic security for your VPS
 
-See the following reference tutorials, from [feross.org] [feross], from [digitalocean.com/community] [do_serversetup], and from [cbracco.me] [cbracco].
+Ubuntu web server security is something I know next to nothing about, so I leaned *heavily* on the following references: [feross.org] [feross], [digitalocean.com/community] [do_serversetup], and from [cbracco.me] [cbracco].
 
-1. Change root password from DigitalOcean's default
-
-        :::bash
-    	# on REMOTE:
-    	$ passwd <your_new_password>
-
-2. Create a new username account to log in to instead of root
+1. Change root password from DigitalOcean's default.
 
         :::bash
     	# on REMOTE:
-    	$ adduser <your_digitalocean_droplet_name>
+    	$ passwd your_new_password
 
-    I used the same username as my local machine so I have the option to login with `$ ssh <your_digitalocean_droplet_name>.<your_dns_domain>.<your_tld>`.
+2. Create a new username account to log in to instead of root.
+
+        :::bash
+    	# on REMOTE:
+    	$ adduser your_username
+
+    I used the same username as my local machine so I have the option to login with `$ ssh your_droplet_name.yourDNSdomain.com`.
 
     &#x27a9; Specify password, and you can leave other fields blank.
 
@@ -483,7 +494,7 @@ See the following reference tutorials, from [feross.org] [feross], from [digital
     	# on REMOTE:
     	$ visudo
 
-    &#x27a9; In nano text editor, navigate to "# User privilege specification", add a line like the one for "root" user with your new user name like `<your username> ALL=(ALL:ALL) ALL`, save with ctl-x and "Y" to save.
+    &#x27a9; In nano text editor, navigate to `# User privilege specification`, add a line like the one for "root" user with your new user name like `your_username ALL=(ALL:ALL) ALL`, save with `ctl-x` and `Y` to save.
 
 4. Configure SSH to your server to disallow root logins, and operate on a different default port.
 
@@ -491,38 +502,45 @@ See the following reference tutorials, from [feross.org] [feross], from [digital
     	# on REMOTE:
     	$ nano /etc/ssh/sshd_config
 
-    &#x27a9; change "Port 22" to "Port ###" [where ### is less than 1024] [wiki_TCP], and not 22.
+    &#x27a9; change your_SSH_port `Port 22` to `Port ###` [where ### is less than 1024] [wiki_TCP], and not 22.
 
-    &#x27a9; change "PermitRootLogin" to "no"
+    &#x27a9; change the rule for `PermitRootLogin` to `no`
 
-    &#x27a9; add the line "UseDNS no" to the bottom of the file
+    &#x27a9; add the line `UseDNS no` to the bottom of the file
 
-    &#x27a9; add the line "AllowUsers <your user name>" to the bottom of the file.
+    &#x27a9; add the line `AllowUsers your_username` to the bottom of the file.
 
-    &#x27a9; ctl-x to save and exit.
+    &#x27a9; `ctl-x` to save and exit.
 
         :::bash
     	# on REMOTE:
     	$ reload ssh
 
-    &#x27a9; before logging out of root user, make sure everything is set up okay by opening a new Terminal window:
+    &#x27a9; **before logging out of root user**, make sure everything is set up okay by opening a new Terminal window:
 
         :::bash
     	# on REMOTE:
-    	$ ssh -p <your port number> <your username>@<yourdomain.com>
-        $ ssh -p <your port number> <your username>@<droplet IP address>
+    	$ ssh -p your_SSH_port your_username@yourDNSdomain.com # if DNS has registered by now
+        $ ssh -p your_SSH_port your_SSH_port@your_vps_ip       # alternatively
+
+    &#x27a9; If you successfully have logged in to the new user, close the terminal window that's logged in as `root`.  From now on log in as this new user whenever you connect to your VPS.
 
 5. Configure SSH keys
 
     See [DigitalOcean’s SSH Key tutorial] [do_sshkeys].
 
-    a. `ssh-keygen` will create a public/private key pair, saving the public key to /Users/yames/.ssh/do_yames.pub (which will be copied to the remote server that we want to authenticate with) and the private key to /Users/yames/.ssh/do_yames (which we will keep on our local machine to do authentication).
+    The point of the next section is to provide an easier and more secure way to log in to your REMOTE VPS using SSH keys.
 
-        :::bash
-    	# on LOCAL:
-    	$ ssh-keygen -t rsa -C "<your email address>"
+    a. `ssh-keygen` will create a public/private key pair, saving the:
+    
+    + public key to `/Users/your_username/.ssh/your_name_specified.pub` (which will be copied to the remote server that we want to authenticate with)
+    + private key to `/Users/your_username/.ssh/your_name_specified` (which we will keep on our local machine to do authentication).
 
-    &#x27a9; You can specify a custom name for this.
+            :::bash
+        	# on LOCAL:
+        	$ ssh-keygen -t rsa -C "your_email_address"
+
+    &#x27a9; You can specify a custom `your_name_specified.pub` for this.
 
     &#x27a9; Enter a passphrase (if you want).
 
@@ -530,17 +548,26 @@ See the following reference tutorials, from [feross.org] [feross], from [digital
 
         :::bash
     	# on LOCAL:
-    	$ scp -P <your port number> ~/.ssh/<your pub key name>.pub <username>@<domainname>:
+    	$ scp -P your_SSH_port ~/.ssh/your_name_specified.pub your_username@yourDNSdomain.com:
 
     	# on REMOTE:
     	$ mkdir .ssh
-        $ mv <your pub key name>.pub .ssh/authorized_keys
-        $ chown -R <your username>:<your username> .ssh
+        $ mv your_name_specified.pub .ssh/authorized_keys
+        $ chown -R your_username:your_username .ssh
         $ chmod 700 .ssh
         $ chmod 600 .ssh/authorized_keys
         $ exit
 
-    c. Modify your local SSH config file so you can have multiple saved SSH keys
+    &#x27a9; Now you can connect to your REMOTE VPS without providing a password, as long as you're connecting from the machine where you generated the SSH key with one of the following:
+
+        :::bash
+    	# on LOCAL:
+        $ ssh -p your_SSH_port your_username@yourDNSdomain.com
+        $ ssh -p your_SSH_port your_SSH_port@your_vps_ip`
+    
+    c. To avoid typing all the above out, you can modify your local SSH config file.
+    
+    &#x266b; Note, this will also allow you to have multiple saved SSH keys, for example if you had multiple REMOTE servers that you liked to log in to from the same LOCAL machine with different keys associated with each.
 
         :::bash
     	# on LOCAL:
@@ -549,25 +576,25 @@ See the following reference tutorials, from [feross.org] [feross], from [digital
     &#x27a9; Now you can set up remote servers you want to connect to, each getting their own block in this file.  Use following format:
 
         :::text
-    	Host do      
-            HostName jamesnewbrain.com
-            User yames
-            Port 897  
-            IdentityFile "~/.ssh/do_rsa"
-        Host awshost1
-            HostName 54.201.9.50
-            User ubuntu
-            IdentityFile "~/.ssh/aws_skey.pem"
+    	Host do                                    # nickname of this server
+            HostName yourDNSdomain.com             # this can also be an IP address
+            User your_username
+            Port your_SSH_port
+            IdentityFile "~/.ssh/your_private_key"
+        Host awshost1                              # another server you connect to
+            HostName some_other_ip_address
+            User some_other_username
+            IdentityFile "~/.ssh/some_other_combined_key.pem"
 
     &#x27a9; Once you're finished with this file, ctl-x to save and exit.
     
-    From now on, on local machine, you can log in to your remote servers without passwords or remembering the IP addresses, ports, usernames for each one.  You just have to remember the alias you set up as "Host _____" in the .ssh/config file.  I use `ssh do` so that my VPS is just a couple keystrokes away from my local terminal window.
+    From now on, on local machine, you can log in to your remote servers without passwords or remembering the IP addresses, ports, usernames for each one.  You just have to remember the alias you set up as `Host server_nickname` in the `.ssh/config` file.  I use `ssh do` so that my DigitalOcean VPS is just a couple keystrokes away from my local terminal window.
 
 ## IV. More advanced (optional) network security for your VPS
 
-I ended up following a lot of the configurations suggested by [feross.org] [feross] and [cbracco.me] [cbracco].  Any further links are footnoted in the relevant sections.
+I ended up following a lot of the configurations suggested by [feross.org] [feross] and [cbracco.me] [cbracco].
 
-1. Install/config Fail2Ban
+1. Install/config [Fail2Ban] [f2b]
 
     Check out this DigitalOcean tutorial on [installing fail2ban] [do_fail2ban].
 
@@ -585,30 +612,36 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
         $ sudo nano /etc/fail2ban/jail.local
 
     c. Modify configuration file
-    
-    &#x27a9; If you have static IP on local machine, add it to "ignoreip" line
-    &#x27a9; Change bantime from 10 minutes to 1 hour # {bantime = 3600}
-    &#x27a9; Change destemail = <youremailaddress>    # {destemail = james.fgaard@gmail.com}
-    &#x27a9; Change action default to "action = %(action_mwl)s"
-    &#x27a9; In [ssh] section, make sure enabled = true, and change port number to ours.
-    &#x27a9; In [ssh-ddos] section, make sure enabled = true, and change port number to ours.
-    &#x27a9; Use ctl-x to save and exit, and then `$ sudo service fail2ban restart`.
 
-2. Set up an "Uncomplicated Firewall" or UFW, a front-end to iptables.
+    &#x27a9; If you have static IP on local machine, add it to `ignoreip` line
+
+    &#x27a9; Change `bantime` from 10 minutes to 1 hour
+
+    &#x27a9; Change `destemail = your_email_address`
+
+    &#x27a9; Change action default to `action = %(action_mwl)s`
+
+    &#x27a9; In `[ssh]` section, make sure enabled = true, and change port number to ours.
+
+    &#x27a9; In `[ssh-ddos]` section, make sure enabled = true, and change port number to ours.
+
+    &#x27a9; Use `ctl-x` to save and exit, and then `$ sudo service fail2ban restart`.
+
+2. Set up [`Uncomplicated Firewall` or UFW] [ufw], which is a front-end to `iptables`.
 
     See this DigitalOcean tutorial on [installing ufw firewall] [do_ufw].
 
         :::bash
     	# on REMOTE:
-    	$ sudo aptitude install ufw # UFW should be installed by default, but just in case its not:
-        $ sudo status   # verify UFW is off
+    	$ sudo aptitude install ufw         # if not already installed:
+        $ sudo status                       # verify UFW is off
         $ sudo ufw default deny incoming
         $ sudo ufw default allow outgoing
         $ sudo ufw logging on
         $ sudo ufw allow http/tcp
-        $ sudo ufw allow 443 {this is https}
-        $ sudo ufw allow 897/tcp {this is our SSH port}
-        $ sudo ufw allow 21/tcp {this is ftp}
+        $ sudo ufw allow 443                # this is https
+        $ sudo ufw allow your_SSH_port/tcp  # enter your SSH port
+        $ sudo ufw allow 21/tcp             # this is ftp
 
     Turn on and verify:
 
@@ -658,13 +691,13 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 4. Have system auto-reboot if it runs out of memory
 
-    [fanclub.co.za] [fanclub]
+    See article at [fanclub.co.za] [fanclub] for more detail.
 
         :::bash
         # on REMOTE:
         $ sudo nano /etc/sysctl.conf
 
-    &#x27a9; Add following lines to the bottom of the file, then ctl-x to save/exit:
+    &#x27a9; Add following lines to the bottom of the file, then `ctl-x` to save/exit:
 
         :::text
         vm.panic_on_oom=1
@@ -676,7 +709,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
     	# on REMOTE:
     	$ sudo nano /etc/fstab
 
-    &#x27a9; Add following lines to the bottom of the file: `tmpfs /dev/shm tmpfs defaults,noexec,nosuid 0 0`, ctl-x to save/exit.
+    &#x27a9; Add following lines to the bottom of the file: `tmpfs /dev/shm tmpfs defaults,noexec,nosuid 0 0`, then `ctl-x` to save/exit.
 
         :::bash
     	# on REMOTE:
@@ -742,35 +775,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
         $ sudo tiger
         $ sudo less /var/log/tiger/security.report.*
 
-## V. Install Git
-
-Install git, you'll configure it to pull from github later
-
-    :::bash
-    # on REMOTE:
-    $ sudo aptitude install git-core
-
-## VI. Set up basic Python environment on REMOTE (Python, pip, virtualenv)
-
-This is going to be a pretty similar procedure to our setup on our LOCAL machine, the difference being that we will use the `requirements.txt` file generated by `pip freeze` so that our Python `virtualenv` on our REMOTE server matches that of our development environment.
-
-1. Install python (Ubuntu 12.04 already has 2.7.3 installed)
-
-2. Install pip (and python-dev headers in case we will be compiling any python libraries that need them)
-
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install python-pip python-dev
-	
-3. Install virtualenv
-
-        :::bash
-    	# on REMOTE:
-    	$ sudo pip install virtualenv
-
-4. Now we stop for now, as our folder hierarchy and `requirements.txt` file will be synced with GitHub, which we will be bringing over in a later step in this procedure.
-
-## VII. Set up nginx on VPS (web server to publish your website to the internet)
+## V. Set up nginx on VPS (web server to publish your website to the internet)
 
 Check out this [DigitalOcean tutorial] [do_nginx] for reference.
 
@@ -1006,17 +1011,70 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
     	# on REMOTE:
     	$ sudo service nginx restart
 
-## VIII. First time sync with GitHub project, finish Python environment setup (on REMOTE server)
+## VI. Install Git, sync with our website's GitHub repo.
 
-1. Clone jamesnewbrain source from GitHub
+&#x27a9; Install `Git` on your REMOTE VPS.
 
-2. Install Python environment from requirements.txt
+    :::bash
+    # on REMOTE:
+    $ sudo aptitude install git-core
+    
+&#x266b; We will now clone our GitHub repo to our REMOTE server.  Again, I will show cloning this to `~/dev/jamesnewbrain/`, so apply your own pathing as you like.
+    
+&#x27a9; Get the HTTPS URL for your website's GitHub repo from the GitHub website.  Mine looks like `https://github.com/jfallisg/jamesnewbrain.git`.
+
+    :::bash
+    # on REMOTE:
+    $ mkdir ~/dev
+    $ cd dev
+    $ git clone your_github_HTTPS_URL
+
+&#x266b; You now have a copy of your current website repo on your remote server!  We still have a few steps to get this thing working the way we want to.
+
+&#x27a9; To update your REMOTE repo, use:
+
+    :::bash
+	# on REMOTE:
+    $ cd ~/dev/jamesnewbrain
+    $ git pull origin master
+
+## VII. Set up global Python environment on REMOTE
+
+This is going to be a pretty similar procedure to our setup on our LOCAL machine, the difference being that we will use the `requirements.txt` file generated by `pip freeze` so that our Python `virtualenv` on our REMOTE server matches that of our development environment.
+
+1. Install Python (Ubuntu 12.04 already has 2.7.3 installed)
+
+2. Install [`pip`] [pip], the package manager for Python modules.
+
+    &#x266b; You're using a `sudo` to install `pip` globally on your machine, since you'll typically want to be able to install/update/uninstall Python modules outside of any specific virtual environment we set up.
+
+    &#x266b; We also install `python-dev` headers in case we will be compiling any python libraries that need them.
 
         :::bash
     	# on REMOTE:
-        $ env/bin/pip install -r requirements.txt
+    	$ sudo aptitude install python-pip python-dev
+	
+3. Install [`virtualenv`] [venv], the Python virtual environment management system.
 
-3. Add a symbolic link between output to project directory and sites-avail/public_html
+    &#x266b; Remember that `virtualenv` allows you to compartmentalize sets of Python modules for specific projects from the globally installed modules on your entire system. This way you can have project-specific versions of modules and manage any conflicts between modules on a project-by-project basis.  It also allows you to sync your "blessed" set of Python modules from your LOCAL machine with your REMOTE machine, which we will do later in this procedure.
+
+        :::bash
+    	# on REMOTE:
+    	$ sudo pip install virtualenv
+
+## VIII. First time sync with GitHub project, finish Python environment setup (on REMOTE server)
+
+1. Install Python environment from GitHub-synced `requirements.txt`
+
+        :::bash
+    	# on REMOTE:
+    	$ cd ~/dev/jamesnewbrain
+    	$ virtualenv env                   # create a Python virtualenv
+    	$ source env/bin/activate          # active our Python virtualenv
+    	$ pip install -r requirements.txt  # install our site's Python dependencies
+    	$ pip freeze                       # check how it went
+
+2. Add a symbolic link between output to project directory and sites-avail/public_html
 
 ## IX. Make a snapshot backup of your VPS now
 
@@ -1141,93 +1199,99 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 <!---
 LINKS
 -->
-[digitalocean]:     http://digitalocean.com
-                    "DigitalOcean"
-[pelican]:          http://docs.getpelican.com/en/3.3.0/
-                    "Get Pelican"
-[python]:           http://www.python.org/
-                    "Python"
-[jekyll]:           http://jekyllrb.com/
-                    "Jekyll Ruby"
-[github]:           https://github.com/
-                    "GitHub"
-[markdown]:         http://daringfireball.net/projects/markdown/
-                    "Markdown"
-[venv]:             http://www.virtualenv.org/en/latest/
-                    "Fabric"
-[pip]:              http://www.pip-installer.org/en/latest/
-                    "pip"
-[tw]:               http://www.barebones.com/products/textwrangler/
-                    "TextWrangler"
+[beautsoup]:        http://www.crummy.com/software/BeautifulSoup/
+                    "BeautifulSoup"
 [bw]:               http://bywordapp.com/
                     "Byword 2"
-[io]:               http://imageoptim.com/
-                    "ImageOptim"
-[ia]:               http://pngmini.com/
-                    "ImageAlpha"
-[nv]:               http://brettterpstra.com/projects/nvalt/
-                    "nvALT"
-[nginx]:            http://wiki.nginx.org/Main
-                    "nginx"
-[ufw]:              https://help.ubuntu.com/community/UFW
-                    "Uncomplicated Firewall"
+[cbracco]:          http://cbracco.me/vps/
+                    "cbracco.me - vps"
+[claudiodangelis]:  http://www.claudiodangelis.com/2013/blogging-with-jekyll-using-git-github-and-amazon-aws/
+                    "claudiodangelis.com - blogging with jekyll"
+[clemsha]:          http://www.clemesha.org/blog/modern-python-hacker-tools-virtualenv-fabric-pip/
+                    "clemsha.org - modern python hacker tools"
+[dabapps]:          http://dabapps.com/blog/introduction-to-pip-and-virtualenv-python/
+                    "dabapps.com - intro to pip and virtualenv"
+[digitalocean]:     http://digitalocean.com
+                    "DigitalOcean"
+[dod]:              https://cloud.digitalocean.com/
+                    "DigitalOcean - Dashboard"
+[do_droplet]:       https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server
+                    "DigitalOcean - Droplet creation"
+[do_fail2ban]:      https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04
+                    "DigitalOcean - fail2ban"
+[do_nginx]:         https://www.digitalocean.com/community/articles/how-to-install-nginx-on-ubuntu-12-04-lts-precise-pangolin
+                    "DigitalOcean - nginx"
+[do_serversetup]:   https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04             
+                    "digitalocean.com/community - initial server setup with ubuntu"
+[do_setfqdn]:       https://www.digitalocean.com/community/questions/how-to-set-fqdn-in-ubuntu
+                    "DigitalOcean - Set fqdn"
+[do_sethostname]:   https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean
+                    "DigitalOcean set hostname tutorial"
+[do_sshkeys]:       https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets
+                    "DigitalOcean - SSH Keys"
+[do_ufw]:           https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server
+                    "DigitalOcean - ufw"
+[do_virtualhosts]:  https://www.digitalocean.com/community/articles/how-to-set-up-nginx-virtual-hosts-server-blocks-on-ubuntu-12-04-lts--3
+                    "DigitalOcean - virtual hosts"
+[duncanlock1]:      http://duncanlock.net/blog/2013/05/17/how-i-built-this-website-using-pelican-part-1-setup/
+                    "duncanlock.net - built website using pelican - pt 1"
+[duncanlock2]:      https://github.com/dflock/duncanlock.net/blob/master/content/posts/tech/how-i-built-this-website-using-pelican-part-2-themes.rst
+                    "duncanlock.net - built website using pelican - pt 2"
 [f2b]:              http://www.fail2ban.org/wiki/index.php/Main_Page
                     "Fail2ban"
 [fabric]:           http://docs.fabfile.org/en/1.8/
                     "Fabric"
-[do_droplet]:       https://www.digitalocean.com/community/articles/how-to-create-your-first-digitalocean-droplet-virtual-server
-                    "DigitalOcean - Droplet creation"
-[do_sethostname]:   https://www.digitalocean.com/community/articles/how-to-set-up-a-host-name-with-digitalocean
-                    "DigitalOcean set hostname tutorial"
-[do_setfqdn]:       https://www.digitalocean.com/community/questions/how-to-set-fqdn-in-ubuntu
-                    "DigitalOcean - Set fqdn"
-[feross]:           http://feross.org/how-to-setup-your-linode/
-                    "feross.org - how to set up your linode"
-[do_serversetup]:   https://www.digitalocean.com/community/articles/initial-server-setup-with-ubuntu-12-04             
-                    "digitalocean.com/community - initial server setup with ubuntu"
-[cbracco]:          http://cbracco.me/vps/
-                    "cbracco.me - vps"
-[do_sshkeys]:       https://www.digitalocean.com/community/articles/how-to-use-ssh-keys-with-digitalocean-droplets
-                    "DigitalOcean - SSH Keys"
-[do_fail2ban]:      https://www.digitalocean.com/community/articles/how-to-protect-ssh-with-fail2ban-on-ubuntu-12-04
-                    "DigitalOcean - fail2ban"
-[do_ufw]:           https://www.digitalocean.com/community/articles/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server
-                    "DigitalOcean - ufw"
 [fanclub]:          http://www.thefanclub.co.za/how-to/how-secure-ubuntu-1204-lts-server-part-1-basics
                     "fanclub.co.za - secure ubuntu"
-[dabapps]:          http://dabapps.com/blog/introduction-to-pip-and-virtualenv-python/
-                    "dabapps.com - intro to pip and virtualenv"
-[duncanlock1]:      http://duncanlock.net/blog/2013/05/17/how-i-built-this-website-using-pelican-part-1-setup/
-                    "duncanlock.net - built website using pelican - pt 1"
-[clemsha]:          http://www.clemesha.org/blog/modern-python-hacker-tools-virtualenv-fabric-pip/
-                    "clemsha.org - modern python hacker tools"
-[homebrew]:         http://brew.sh/
-                    "Homebrew - The missing package manager for OS X"
-[do_nginx]:         https://www.digitalocean.com/community/articles/how-to-install-nginx-on-ubuntu-12-04-lts-precise-pangolin
-                    "DigitalOcean - nginx"
-[do_virtualhosts]:  https://www.digitalocean.com/community/articles/how-to-set-up-nginx-virtual-hosts-server-blocks-on-ubuntu-12-04-lts--3
-                    "DigitalOcean - virtual hosts"
-[jamesmurty]:       http://jamesmurty.com/2013/05/23/migrate-wordpress-blog-to-static-site/
-                    "jamesmurty.com - wordpress to static"
-[gtmanfred]:        http://blog.gtmanfred.com/setting-up-pelican-and-git.html
-                    "gtmanfred.com - setting up pelican and git"
-[claudiodangelis]:  http://www.claudiodangelis.com/2013/blogging-with-jekyll-using-git-github-and-amazon-aws/
-                    "claudiodangelis.com - blogging with jekyll"
-[martinbrochhaus]:  http://martinbrochhaus.com/pelican2.html
-                    "martinbrochhaus.com - pelican"
-[xlarrakoetxea]:    http://blog.xlarrakoetxea.org/posts/2012/10/creating-a-blog-with-pelican/
-                    "xlarrakoetxea.org - creating a blog with pelican"
+[feross]:           http://feross.org/how-to-setup-your-linode/
+                    "feross.org - how to set up your linode"
+[github]:           https://github.com/
+                    "GitHub"
 [gitignore]:        https://raw2.github.com/github/gitignore/master/Python.gitignore
                     "github.com - Python.gitignore"
+[gtmanfred]:        http://blog.gtmanfred.com/setting-up-pelican-and-git.html
+                    "gtmanfred.com - setting up pelican and git"
+[homebrew]:         http://brew.sh/
+                    "Homebrew - The missing package manager for OS X"
+[ia]:               http://pngmini.com/
+                    "ImageAlpha"
+[io]:               http://imageoptim.com/
+                    "ImageOptim"
+[linode]:           https://www.linode.com/
+                    "Linode"
+[jamesmurty]:       http://jamesmurty.com/2013/05/23/migrate-wordpress-blog-to-static-site/
+                    "jamesmurty.com - wordpress to static"
+[jekyll]:           http://jekyllrb.com/
+                    "Jekyll Ruby"
+[markdown]:         http://daringfireball.net/projects/markdown/
+                    "Markdown"
+[martinbrochhaus]:  http://martinbrochhaus.com/pelican2.html
+                    "martinbrochhaus.com - pelican"
+[nginx]:            http://wiki.nginx.org/Main
+                    "nginx"
+[nv]:               http://brettterpstra.com/projects/nvalt/
+                    "nvALT"
+[pelican]:          http://docs.getpelican.com/en/3.3.0/
+                    "Get Pelican"
+[pip]:              http://www.pip-installer.org/en/latest/
+                    "pip"
 [pelican-themes]:   http://pelicanthemes.com/
                     "Preview Pelican Themes"
 [plcn-thm-galary]:  http://pelican-themes-gallery.place.org/
                     "Pelican Theme Galary"
 [plcn_thm_repo]:    https://github.com/getpelican/pelican-themes
                     "Pelican themes repo"
-[duncanlock2]:      https://github.com/dflock/duncanlock.net/blob/master/content/posts/tech/how-i-built-this-website-using-pelican-part-2-themes.rst
-                    "duncanlock.net - built website using pelican - pt 2"
+[python]:           http://www.python.org/
+                    "Python"
 [so_ports]:         http://unix.stackexchange.com/questions/16564/why-are-the-first-1024-ports-restricted-to-the-root-user-only
                     "stackoverflow - first 1024 ports"
+[tw]:               http://www.barebones.com/products/textwrangler/
+                    "TextWrangler"
+[ufw]:              https://help.ubuntu.com/community/UFW
+                    "Uncomplicated Firewall"
+[venv]:             http://www.virtualenv.org/en/latest/
+                    "Fabric"
 [wiki_TCP]:         http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
                     "wikipedia - List of TCP and UDP port numbers"
+[xlarrakoetxea]:    http://blog.xlarrakoetxea.org/posts/2012/10/creating-a-blog-with-pelican/
+                    "xlarrakoetxea.org - creating a blog with pelican"
