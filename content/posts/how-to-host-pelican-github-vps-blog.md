@@ -1,6 +1,6 @@
 Title: How to combine Pelican, GitHub, and a DigitalOcean VPS to host a cool blog
 Date: 2014-02-17 10:36
-Modified: 2014-02-17 14:00
+Modified: 2014-02-17 23:32
 Category: tech
 Tags: webdev, Pelican, GitHub, VPS, Python, Linux
 Slug: how-to-host-pelican-github-vps-blog
@@ -502,7 +502,7 @@ Ubuntu web server security is something I know next to nothing about, so I leane
     	# on REMOTE:
     	$ nano /etc/ssh/sshd_config
 
-    &#x27a9; change your_SSH_port `Port 22` to `Port ###` [where ### is less than 1024] [wiki_TCP], and not 22.
+    &#x27a9; change your_SSH_port `Port 22` to `Port ###` [where ### is less than 1024] [so_ports], and not 22.
 
     &#x27a9; change the rule for `PermitRootLogin` to `no`
 
@@ -588,7 +588,7 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
     &#x27a9; Once you're finished with this file, ctl-x to save and exit.
     
-    From now on, on local machine, you can log in to your remote servers without passwords or remembering the IP addresses, ports, usernames for each one.  You just have to remember the alias you set up as `Host server_nickname` in the `.ssh/config` file.  I use `ssh do` so that my DigitalOcean VPS is just a couple keystrokes away from my local terminal window.
+    From now on, on local machine, you can log in to your remote servers without passwords or remembering the IP addresses, ports, usernames for each one.  You just have to remember the alias you set up as `Host server_nickname` in the `.ssh/config` file.  I use `ssh do` so that my DigitalOcean VPS is just a couple keystrokes away from my local terminal window.  You'll still have to remember your password in order to root sudo access however.
 
 ## IV. More advanced (optional) network security for your VPS
 
@@ -629,7 +629,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 2. Set up [`Uncomplicated Firewall` or UFW] [ufw], which is a front-end to `iptables`.
 
-    See this DigitalOcean tutorial on [installing ufw firewall] [do_ufw].
+    See this DigitalOcean tutorial on [installing ufw firewall] [do_ufw].  See [this wiki page] [wiki_TCP] for what ports default to what protocol, as used in following code block.
 
         :::bash
     	# on REMOTE:
@@ -775,24 +775,106 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
         $ sudo tiger
         $ sudo less /var/log/tiger/security.report.*
 
-## V. Set up nginx on VPS (web server to publish your website to the internet)
+## V. Set up [`nginx`] [nginx] on your REMOTE VPS (web server to publish your website to the internet)
 
-Check out this [DigitalOcean tutorial] [do_nginx] for reference.
+[`nginx`] [nginx] is open source webserver software that we will run on our REMOTE server.  One of its features is that you can host multiple `yourDNSdomain.com`'s from a single server.  We want to configure our REMOTE server to serve our website to the internet at `yourDNSdomain.com`.  Check out this [DigitalOcean tutorial] [do_nginx] for reference.
 
-1. Install and start nginx
+### First: a couple useful `nginx` / port debug commands
+
+1. Start, stop, restart `nginx` on Ubuntu.
+
+    Assuming your `/etc/init.d/nginx` is populated, which it should be with a default install of `nginx` on Ubuntu:
+
+        :::bash
+    	# on REMOTE (Ubuntu):
+        $ sudo service nginx stop
+        $ sudo service nginx start
+        $ sudo service nginx restart
+        $ sudo service nginx reload
+
+
+2. It will be helpful to be able to ask either your LOCAL or REMOTE machine which ports are being listened to using TCP protocol and by which processes.  This way you can verify your configurations and also see if `nginx` or the Python web servers are behaving the ways you believe.
+
+        :::bash
+    	# on REMOTE:
+    	$ sudo lsof -i -n -P | grep TCP
+    	# my LOCAL machine didn't require sudo:
+    	$ lsof -i -n -P | grep LISTEN
+    	$ lsof -i -n -P | grep TCP
+    	# if you know which specific port you want to ask for, say 8080:
+        $ lsof -i -n -P | grep 8080
+        
+        # you're looking for a return like:
+        nginx      987     root    9u  IPv4   8940      0t0  TCP *:80 (LISTEN)
+        nginx      987     root   10u  IPv6   8941      0t0  TCP *:80 (LISTEN)
+        nginx      998 www-data    9u  IPv4   8940      0t0  TCP *:80 (LISTEN)
+        nginx      998 www-data   10u  IPv6   8941      0t0  TCP *:80 (LISTEN)
+
+3. Look up which IP address `nginx` is serving up websites on:
+
+        :::bash
+    	# on REMOTE:
+        $ ifconfig eth0 | grep inet | awk '{ print $2 }'
+
+4. I found it useful also to have a quick way to search the full file system from root on for instance of a string, for example to search my REMOTE server for where all relevant directories and files dealing with `nginx` were:
+
+        :::bash
+    	# on REMOTE:
+    	$ find /. -iname "*nginx*" 2>/dev/null
+
+	&#x266b; The piping of warnings to /dev/null will mute all the inevitable warnings about permission denied on protected files.
+	
+	&#x266b; This isn't really recommended on your LOCAL machine, though you can run it if you wan't to, it will just take a long time.
+
+5. To kill `nginx` processes, get the process ID of the master process with:
+
+        :::bash
+    	# on REMOTE or LOCAL:
+    	$ ps -ax | grep nginx
+
+    &#x27a9; Then kill it:
+
+        :::bash
+    	# on REMOTE or LOCAL:
+    	$ kill -s QUIT <process id>
+
+### Back to `nginx` configuration
+
+Now here's where things became a bit confusing to me, as someone who hasn't used `nginx` before.  I'll recount how I believe all this to work.  Again, if you know better, please leave me a comment and I'll correct the post for everyone!
+
+Basically `nginx` allows for a global server setup, and then n-number of specially tailored setups for specific "virtual hosts" (in traditional Apache lingo), or "server blocks" (`nginx`'s name for the same concept).  Each of these virtual hosts can then be separate web sites with different associated `yourDNSdomain.com`'s, all with the same server computer on the backend.  Because some of the pathing gets confusing, use the following as reference as we work through this:
+
+| Description                                               | Path                                              |
+| --------------------------------------------------------- | ------------------------------------------------- |
+| Default installation directory (Ubuntu)                   | `/etc/nginx/`                                     |
+| Default installation directory (Mac OS)                   | `/usr/local/etc/nginx/`                           |
+| Global config file                                        | `/etc/nginx/nginx.conf`                           |
+| Available virtual host config files                       | `/etc/nginx/sites-available`                      |
+| Default virtual host config file                          | `/etc/nginx/sites-available/default`              |
+| Backup of as-installed default virtual host config file   | `/etc/nginx/sites-available/default.bak`          |
+| My blog's virtual host config file                        | `/etc/nginx/sites-available/jamesnewbrain.com`    |
+| Sym-links pointing at enabled virtual host config files   | `/etc/nginx/sites-enabled`                        |
+| My blog's Pelican-built HTML                              | `~/dev/jamesnewbrain/output`                      |
+| Dir with sym-link to my blog's HTML; used by `nginx`      | `/var/www/jamesnewbrain.com/public_html`          |
+| Default global logs end up in                             | `/var/log/nginx`                                  |
+| My blog's virtual host logs end up in                     | `/var/www/jamesnewbrain.com/logs`                 |
+| default 50x.html and index.html used globally by `nginx`  | `/usr/share/nginx/www`                            |
+
+1. Install and start [`nginx`] [nginx]
 
         :::bash
     	# on REMOTE:
     	$ sudo aptitude install nginx
         $ sudo service nginx start      # to start nginx
         
-    &#x266b; My default nginx version as installed by aptitude in Ubuntu was `nginx/1.1.19`.
+    &#x266b; My default `nginx` version as installed by `aptitude` in Ubuntu was `nginx/1.1.19`.
 
-    &#x27a9; Check nginx is on
+    &#x27a9; Check `nginx` is on
 
         :::bash
     	# on REMOTE:
-    	$ ifconfig eth0 | grep inet | awk '{ print $2 }'
+    	$ sudo lsof -i -n -P | grep LISTEN                 # make sure nginx is on
+    	$ ifconfig eth0 | grep inet | awk '{ print $2 }'   # which IP is it serving on?
     
     &#x27a9; Visit the IP returned in browser to see "Welcome to nginx", this is your server!
 
@@ -804,29 +886,33 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
 
     &#x266b; If you get back `System start/stop links for /etc/init.d/nginx already exist.`, it's already going to start automatically.
 
-3. Change server_names_hash_bucket_size default in nginx.conf.
+3. Configure global `nginx` configuration at `/etc/nginx/nginx.conf`:
+
+    &#x27a9; Open `nginx.conf` for editing.
 
         :::bash
     	# on REMOTE:
-    	$ sudo nano /etc/nginx/nginx.conf
+        $ sudo nano /etc/nginx/nginx.conf
 
     &#x27a9; Uncomment `# server_names_hash_bucket_size 64;`.
 
-4. Customize the default nginx config.
+    &#x27a9; make sure `include /etc/nginx/sites-enabled/*;` is present and uncommented somewhere in `nginx.conf`.
+
+4. Customize the default `nginx` virtual hosts config.
 
         :::bash
     	# on REMOTE:
     	$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
         $ sudo nano /etc/nginx/sites-available/default
 
-    &#x27a9; modify the file in `nano` like this:
+    &#x27a9; modify `sites-available/default` in `nano` like this:
 
         :::text
         server {
             listen   80; ## listen for ipv4; this line is default and implied
             listen   [::]:80 default ipv6only=on; ## listen for ipv6
         
-            root /usr/share/nginx/html;
+            root /usr/share/nginx/www;
             index index.html index.htm index.php;
         
             # Make site accessible from http://localhost/
@@ -845,7 +931,7 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
             # Redirect server error pages to the static page /50x.html
             error_page 500 502 503 504 /50x.html;
             location = /50x.html {
-                root /usr/share/nginx/html;
+                root /usr/share/nginx/www;
             }
         
             # Pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
@@ -863,27 +949,29 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
             }
         }
 
-5.  Set up nginx Virtual Hosts (server blocks) to host multiple websites on single server
+5.  Set up `nginx` Virtual Hosts (server blocks) to host multiple websites on single server
 
     There's a decent tutorial I referenced from the [DigitalOcean community] [do_virtualhosts].
+
+    `/var/www/` is the conventional root directory for public_html that your web server will host.
 
     a. Create a directory to hold new website's HTML (use an actual DNS name)
 
         :::bash
     	# on REMOTE:
-    	$ sudo mkdir -p /var/www/<your domain>/public_html
+    	$ sudo mkdir -p /var/www/yourDNSdomain.com/public_html
 
     &#x27a9; Also make a folder for the automated logs in the same area.
 
         :::bash
     	# on REMOTE:
-    	$ sudo mkdir -p /var/www/<your domain>/logs
+    	$ sudo mkdir -p /var/www/yourDNSdomain.com/logs
 
     b. Grant ownership and modification permissions.
 
         :::bash
     	# on REMOTE:
-    	$ sudo chown -R <username>:www-data /var/www/<your domain>/public_html
+    	$ sudo chown -R your_username:www-data /var/www/yourDNSdomain.com/public_html
 
     &#x27a9; Give read access to everyone.
 
@@ -895,36 +983,36 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
 
         :::bash
     	# on REMOTE:
-    	$ sudo nano /var/www/<your domain>/public_html/index.html
+    	$ sudo nano /var/www/yourDNSdomain.com/public_html/index.html
 
     &#x27a9; in nano, copy/paste:
 
         :::html
     	<html>
             <head>
-                <title>yourdomain.com</title>
+                <title>yourDNSdomain.com</title>
             </head>
             <body>
                 <h1>Good job man, you have set up a Virtual Host</h1>
             </body>
         </html>
 
-    d. Create a new virtual host file by copying nginx default config document.
+    d. Create a virtual host config file for yourDNSdomain.com from a copy of the `sites-availble/default` config document.
 
     I referenced [cbracco.me] [cbracco] some more here.
 
         :::bash
     	# on REMOTE:
     	$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/example.com
-    	$ sudo nano /etc/nginx/sites-available/example.com
+    	$ sudo nano /etc/nginx/sites-available/yourDNSdomain.com
 
-    &#x27a9; Begin editing your custom nginx config file
+    &#x27a9; Begin editing your custom virtual host config file
 
     &#x27a9; Uncomment `listen    80;` so that traffic coming through port 80 will be directed to site
 
-    &#x27a9; Change the `root` extension to match our site's directory on the server
+    &#x27a9; Change the `root` extension to match `/var/www/yourDNSdomain.com/public_html`
 
-    &#x27a9; Change the `server_name` to your DNS domain
+    &#x27a9; Change the `server_name` to `yourDNSdomain.com`
 
     &#x266b; For an example configuration, see below:
 
@@ -957,7 +1045,7 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
                 include global/restrictions.conf;
         ...
 
-    e. Create global/restrictions.conf
+    e. Create `global/restrictions.conf`:
 
         :::bash
     	# on REMOTE:
@@ -967,8 +1055,10 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
     &#x27a9; Edit file so that it resembles:
 
         :::text
+        # based on info from: http://cbracco.me/vps/#vhosts
+        
         # Global restrictions configuration file.
-        # Designed to be included in any server {} block.&lt;/p&gt;
+        # Designed to be included in any server block.
         location = /favicon.ico {
             log_not_found off;
             access_log off;
@@ -1011,32 +1101,15 @@ Check out this [DigitalOcean tutorial] [do_nginx] for reference.
     	# on REMOTE:
     	$ sudo service nginx restart
 
-## VI. Install Git, sync with our website's GitHub repo.
+You should now be able to actually visit **yourDNSdomain.com** and see the test `index.html` we made in `nano` a few steps back.  If so, you've successfully connected the internet to a DNS lookup against yourDNSdomain.com to the IP address DigitalOcean provides your droplet to a `nginx` virtual host to an actual `*.html` file on your VPS! Good job! We'll be back to finish the job once we get your website actually building on your server in `Pelican`.
+
+## VI. Install Git
 
 &#x27a9; Install `Git` on your REMOTE VPS.
 
     :::bash
     # on REMOTE:
     $ sudo aptitude install git-core
-    
-&#x266b; We will now clone our GitHub repo to our REMOTE server.  Again, I will show cloning this to `~/dev/jamesnewbrain/`, so apply your own pathing as you like.
-    
-&#x27a9; Get the HTTPS URL for your website's GitHub repo from the GitHub website.  Mine looks like `https://github.com/jfallisg/jamesnewbrain.git`.
-
-    :::bash
-    # on REMOTE:
-    $ mkdir ~/dev
-    $ cd dev
-    $ git clone your_github_HTTPS_URL
-
-&#x266b; You now have a copy of your current website repo on your remote server!  We still have a few steps to get this thing working the way we want to.
-
-&#x27a9; To update your REMOTE repo, use:
-
-    :::bash
-	# on REMOTE:
-    $ cd ~/dev/jamesnewbrain
-    $ git pull origin master
 
 ## VII. Set up global Python environment on REMOTE
 
@@ -1062,21 +1135,7 @@ This is going to be a pretty similar procedure to our setup on our LOCAL machine
     	# on REMOTE:
     	$ sudo pip install virtualenv
 
-## VIII. First time sync with GitHub project, finish Python environment setup (on REMOTE server)
-
-1. Install Python environment from GitHub-synced `requirements.txt`
-
-        :::bash
-    	# on REMOTE:
-    	$ cd ~/dev/jamesnewbrain
-    	$ virtualenv env                   # create a Python virtualenv
-    	$ source env/bin/activate          # active our Python virtualenv
-    	$ pip install -r requirements.txt  # install our site's Python dependencies
-    	$ pip freeze                       # check how it went
-
-2. Add a symbolic link between output to project directory and sites-avail/public_html
-
-## IX. Make a snapshot backup of your VPS now
+## VIII. Make a snapshot backup of your VPS now
 
 The timing is good for a backup snapshot of your VPS, because all the software we need is installed and configured, but we haven't polluted the machine with any specific source code checkouts of our own.  By saving a snapshot now, if we need to get back to a configured image of our system, we can, but without having to redo all the time-consuming sys-admin activities we did earlier.
 
@@ -1087,6 +1146,64 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 	$ sudo shutdown -h now
 
 &#x27a9; Now from the DigitalOcean dashboard, select to take a snapshot.  DigitalOcean will turn your server back on for you after they are done.
+
+## IX. Sync REMOTE with our website's GitHub repo, and finish Python environment setup
+
+1. We will now clone our GitHub repo to our REMOTE server.  Again, I will show cloning this to `~/dev/jamesnewbrain/`, so apply your own pathing as you like.
+    
+    &#x27a9; Get the HTTPS URL for your website's GitHub repo from the GitHub website.  Mine looks like `https://github.com/jfallisg/jamesnewbrain.git`.
+
+        :::bash
+        # on REMOTE:
+        $ mkdir ~/dev
+        $ cd dev
+        $ git clone your_github_HTTPS_URL
+
+    &#x266b; You now have a copy of your current website repo on your remote server!  We still have a few steps to get this thing working the way we want to.
+
+    &#x27a9; To update your REMOTE repo, use:
+
+        :::bash
+    	# on REMOTE:
+        $ cd ~/dev/jamesnewbrain
+        $ git pull origin master
+
+2. Install Python environment from GitHub-synced `requirements.txt`
+
+        :::bash
+    	# on REMOTE:
+    	$ virtualenv env                   # create a Python virtualenv
+    	$ source env/bin/activate          # active our Python virtualenv
+    	$ pip install -r requirements.txt  # install our site's Python dependencies
+    	$ pip freeze                       # check how it went
+
+## X. Build HTML and serve the site to the internet
+
+1. You can have `Pelican` on REMOTE server build HTML now, which will populate the `output` folder in your site's directory.
+
+        :::bash
+    	# on REMOTE:
+        $ make html
+
+2. Add a symbolic link between your blog's `output/` dir and `/var/www/yourDNSdomain.com/public_html`.
+
+    The idea here is to make a symbolic link between the contents of `~/dev/jamesnewbrain/output/`, the location `Pelican` drops the HTML that it builds, and the location `nginx` is looking to serve HTML on its webserver.
+
+        :::bash
+    	# on REMOTE:
+    	
+    	# first delete the test index.html file we made earlier
+    	$ sudo service nginx stop
+        $ sudo rm -rf /var/www/jamesnewbrain.com/public_html
+        
+        # make the symbolic link
+        $ sudo ln -s ~/dev/jamesnewbrain/output/ /var/www/jamesnewbrain.com/public_html
+        
+        # check it worked
+        $ ls -alFGh         # if this output makes sense, proceed
+        $ sudo service nginx restart
+
+    &#x27a9; You should now be able to visit **yourDNSdomain.com** in an actual web browser and see your Pelican-generated website!
 
 ***
 
