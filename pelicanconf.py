@@ -35,6 +35,8 @@ MD_EXTENSIONS = (
     'extra',
 )
 
+DISQUS_SITENAME = 'jamesnewbrain'
+
 PLUGIN_PATH = 'plugins'
 PLUGINS = ['extract_toc']
 
