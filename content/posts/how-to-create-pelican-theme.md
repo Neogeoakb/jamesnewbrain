@@ -231,6 +231,12 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
 
     &#x27a9; In an actual blogpost `*.md` document, make sure to add a line containing `[TOC]` after the metadata, before your blog post text.
 
+***
+
+
+
+***
+
 <!---
 LINKS
 -->

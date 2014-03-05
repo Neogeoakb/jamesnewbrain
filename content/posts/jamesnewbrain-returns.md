@@ -39,3 +39,5 @@ As the hello world post of this here brog, the triumphant return of jamesnewbrai
 * the song ["Send it On"](http://youtu.be/3cL4leeORpY) by D'Angelo, i could listen to this song on repete for an entire year non-stop
 * the comics of [Olivier Schrauwen](http://ollieschrauwen.blogspot.com/)
 * the horns on [SpottieOttieDopaliscious](http://youtu.be/vXmqauitBkM)
+
+***
