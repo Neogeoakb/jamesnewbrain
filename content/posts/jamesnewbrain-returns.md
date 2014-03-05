@@ -1,6 +1,6 @@
 Title: jamesnewbrain.com returns!
 Date: 2014-02-16 17:30
-Modified: 2014-02-16 17:30
+Modified: 2014-03-04 16:48
 Category: life
 Tags: loves, lists
 Slug: jamesnewbrain-returns
@@ -8,13 +8,9 @@ disqus_identifier: jamesnewbrain-returns
 Author: James Fallisgaard
 Summary: hello world-ish post
 
-[TOC]
-
-# jamesnewbrain.com returns!
-
 A lot has happened in the world of blog hosting and web development since I last dabbled in this seven (!) years ago.  I faced a pretty decent learning curve to bring this site up in accordance with what I believe to be some semblance of modern web technologies.
 
-As the hello world post of this here brog, the triumphant return of jamesnewbrain.com (after I forgot to continue to pay for hosting on that wordpress site I was running so many years ago), I offer the following (growing) list of things I love **in no particular order except for number one on the list**:
+As the hello world post of this here brog, the triumphant return of jamesnewbrain.com (after I forgot to continue to pay for hosting on that wordpress site I was running so many years ago), I offer the following (growing) list of things I love in no particular order **except for number one on the list:**
 
 * Steph
 * strong espresso
