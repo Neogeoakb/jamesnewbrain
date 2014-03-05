@@ -1,5 +1,5 @@
 Title: How to use Pelican, GitHub, and a DigitalOcean VPS to host a cool blog
-Date: 2014-02-17 10:36
+Date: 2014-03-04 18:05
 Modified: 2014-03-04 18:05
 Category: tech
 Tags: webdev, Pelican, GitHub, VPS, Python, Ubuntu

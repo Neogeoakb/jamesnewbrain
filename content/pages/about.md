@@ -1,53 +1,68 @@
 Title: about
-Date: 2014-02-21 16:26
-Modified: 2014-02-21 16:26
+Date: 2014-03-05 15:55
+Modified: 2014-03-05 15:55
 Slug: about
-disqus_identifier: about
 Author: James Fallisgaard
 Summary: bio
-status: hidden
 Template: about
 
-<div class="bio" markdown="1">
+## bio
 
-# bio
+Hey guys, my name is James Fallisgaard.  Welcome to my site! 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam volutpat arcu metus. Praesent sit amet dolor id dui consequat facilisis. Aliquam ornare enim sit amet sagittis consequat. Donec dictum dui sit amet leo laoreet viverra. Nulla nec dignissim libero, a commodo nulla. Donec lobortis vitae turpis sed ultrices. Etiam laoreet volutpat risus non interdum. Etiam euismod aliquet auctor. Suspendisse ullamcorper nisl a ipsum rutrum luctus.
+I'm a data scientist currently doing freelance consulting out of Bushwick, Brooklyn, NY.
+
+I grew up in Seattle, where I lived for the first 26 years of my life (except for a too-brief half year exchange in Seoul, S. Korea).  I cut my teeth in data analysis and visualization increasing semiconductor yield and working on the "Internet of Things" with [Impinj] [impinj].  There I spent most of my post-college career building test data management software systems and doing data science and product engineering.  My BS degree is in [Materials Science and Engineering] [uw-mse] with a minor in Physics from the University of Washington, where I first discovered a love for small companies founding a startup in polymer solar cells that didn't go anywhere except the finals of the [UW Business Plan Competition] [uw-bpc].  In the fall of 2013 I moved to New York with my girlfriend Steph, where we live with our cute tabby named Link.
+
+<div class="rowoficons" markdown="1">
+<span class="icon" markdown="1"><a href="http://jamesnewbrain.com/feeds/all.atom.xml" title="Atom Feed"><i class="fa fa-rss"></i> Feed</a></span>
+<span class="icon" markdown="1"><a href="http://twitter.com/jamesnewbrain" title="@jamesnewbrain"><i class="fa fa-twitter"></i> @jamesnewbrain</a></span>
+<span class="icon" markdown="1"><a href="http://github.com/jfallisg" title="GitHub"><i class="fa fa-github"></i> GitHub</a></span>
+<span class="icon" markdown="1"><a href="http://www.linkedin.com/in/jamesfallisgaard" title="LinkedIn"><i class="fa fa-linkedin"></i> LinkedIn</a></span>
+<span class="icon" markdown="1"><a href="http://www.flickr.com/photos/jamesnewbrain" title="Flickr"><i class="fa fa-flickr"></i> Flickr</a></span>
+<span class="icon" markdown="1"><a href="http://instagram.com/jfallisg" title="Instagram"><i class="fa fa-instagram"></i> Instagram</a></span>
+<span class="icon" markdown="1"><i class="fa fa-coffee"></i> email jamesfallisgaard at gmail</span>
+</div>
+
+<div class="aboutsection" markdown="1">
+
+## why programming?
+
+It feels like I came to the world of software development and data science through an unmarked side door.  I still remember the thought that went through my head when I finished writing my first ever Perl script at work to automate crawling a folder hierarchy and format some data so I could make a graph in Excel. I had struggled so much trying to understand the basic ideas of scripting and Perl syntax, throwing questions at google, and trying stuff until finally, like magic, the script worked and produced the output I wanted. Being a formally trained engineer (in Materials Science), I was of course familiar with working and working a problem until finally receiving that jolt of euphoria when you solve it. But programming to me delivers this feeling at a much more constant rate because you're always getting that steady positive reinforcement of solving problems every time your code compiles correctly or you defeat a bug or you inch forward with whatever it is you're building. The appeal of programming is this combined with the realization I first had after finishing that very first script 3 years ago - in a world where 90% of people's jobs take place on the computer, people who can program effectively have super powers..
 
 </div>
 
-<div class="resume" markdown="1">
+## about this site
 
-# resume
-
-## Freelance
-
-1. Nulla non tincidunt diam, sit amet hendrerit tellus.
-2. Nam pulvinar lectus vel velit lobortis, in posuere nisi gravida. Nullam a sodales leo, et accumsan nunc. Nunc porta nec lacus vitae interdum.
-3. Aenean eget odio ligula. Maecenas in tristique erat, id dictum augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse mollis purus turpis. Donec porta quis augue sed volutpat. Maecenas a enim ut quam volutpat ultrices. Fusce metus quam, vulputate ac semper imperdiet, pretium ut risus. Donec non purus libero. Donec sit amet ligula tortor.
-
-## Impinj
-
-</div>
-
-<div class="about-page" markdown="1">
-
-# about this page
-
-Aliquam dictum odio mi, quis scelerisque arcu pulvinar in. Nam tristique tortor et nulla pulvinar venenatis. Aenean condimentum elementum quam ac rutrum. Vivamus venenatis lorem a mi iaculis adipiscing. Sed at venenatis lacus. Mauris bibendum consequat dapibus. Vestibulum tristique urna eget mauris posuere, eget tincidunt purus ullamcorper. Vestibulum posuere rhoncus ultricies. Ut euismod tincidunt purus. Aliquam erat volutpat. Aenean mattis lobortis porta. Nulla adipiscing neque cursus condimentum blandit. In auctor tortor odio, id hendrerit quam tempus at. Aliquam ac tellus massa. Nulla in tortor nec mauris vulputate interdum. Mauris tristique ac orci ac posuere.
-
-* Donec vitae turpis id orci convallis feugiat. Ut quis iaculis augue.
-
-        :::bash
-        # on LOCAL:
-        $ cd ~/dev/jamesnewbrain
-        $ sudo make devserver
-
-* Donec iaculis elit enim, lacinia tristique dui facilisis vel.
-* Sed tempus lacus a est iaculis dictum. Quisque non odio mollis, vehicula metus sit amet, tristique dolor. Sed nec faucibus dui.
-
-Aliquam dictum odio mi, quis scelerisque arcu pulvinar in. Nam tristique tortor et nulla pulvinar venenatis. Aenean condimentum elementum quam ac rutrum. Vivamus venenatis lorem a mi iaculis adipiscing. Sed at venenatis lacus. Mauris bibendum consequat dapibus. Vestibulum tristique urna eget mauris posuere, eget tincidunt purus ullamcorper. Vestibulum posuere rhoncus ultricies. Ut euismod tincidunt purus. Aliquam erat volutpat. Aenean mattis lobortis porta. Nulla adipiscing neque cursus condimentum blandit. In auctor tortor odio, id hendrerit quam tempus at. Aliquam ac tellus massa. Nulla in tortor nec mauris vulputate interdum. Mauris tristique ac orci ac posuere.
-
-</div>
++ Programmed in [TextWrangler] [tw] on a macbook pro
++ Posts written (along with many many neurotic notes) in [nvALT] [nv] with [Markdown] [md], synced with [Dropbox] [db], with [Byword] [bw] when a distraction-free writing environment is needed
++ As I write this, I'm sitting in [Bat Haus] [bh] located in beautiful Bushwick, Brooklyn, NY!
++ [Pelican] [pel] generates my HTML
++ [Digital Ocean] [do] provides my VPS for hosting
++ Still reading? shout out to my Audio Technica ATH-M50's for hours of great music and good noise isolation
 
 ***
+
+<!-- LINKS -->
+[impinj]:   http://impinj.com/
+            "Impinj INC"
+[uw-mse]:   http://depts.washington.edu/mse/
+            "University of Washington - MSE"
+[uw-bpc]:   http://www.foster.washington.edu/centers/entrepreneurship/businessplancompetition/Pages/BPC.aspx
+            "University of Washington - Business Plan Competition"
+[tw]:       http://www.barebones.com/products/textwrangler/
+            "TextWrangler"
+[nv]:       http://brettterpstra.com/projects/nvalt/
+            "nvALT"
+[md]:       http://daringfireball.net/projects/markdown/
+            "Markdown"
+[db]:       http://www.dropbox.com/
+            "Dropbox"
+[bw]:       http://bywordapp.com/
+            "Byword 2"
+[bh]:       http://batha.us/
+            "Bat Haus"
+[pel]:      http://docs.getpelican.com/en/3.3.0/
+            "Pelican"
+[do]:       https://www.digitalocean.com/
+            "DigitalOcean"

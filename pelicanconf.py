@@ -44,26 +44,3 @@ NAVBAR_EXTRA_BUTTONS = [
         'url': 'http://jamesnewbrain.tumblr.com'},
 ]
 NAVBAR_ABOUT_NAME = 'james new who?'
-ABOUT_LINKS = [
-    {
-        'name': 'Atom Feed',
-        'url': 'http://jamesnewbrain/feeds/all.atom.xml'},
-    {
-        'name': '@jamesnewbrain',
-        'url': 'http://twitter.com/jamesnewbrain'},
-    {
-        'name': 'GitHub',
-        'url': 'http://github.com/jfallisg'},
-    {
-        'name': 'LinkedIn',
-        'url': 'http://www.linkedin.com/in/jamesfallisgaard/'},
-    {
-        'name': 'Flickr',
-        'url': 'http://www.flickr.com/photos/jamesnewbrain/'},
-    {
-        'name': 'Instagram',
-        'url': 'http://instagram.com/jfallisg'},
-    {
-        'name': 'email',
-        'url': 'emailto:james.fgaard@gmail.com'},   
-]
