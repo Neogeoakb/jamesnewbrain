@@ -19,7 +19,7 @@ The procedure outlined here, and this style of blog as static-site generated fro
 - *[Pelican] [pelican], a popular static site generator written in Python*: Based on the Ruby-written pioneer of this type of static site generation, [Jekyll] [jekyll], Pelican appears to be emerging as the consensus Python-based static site generator, with tons of plugin support and help available online to get you going, including this blog how-to!
 - *Use [GitHub] [github]*: Version control your blog posts, written in [Markdown] [markdown] (essentially as human-readable source), which will be BUILT by Pelican before deployment.
 - *Learn by doing*: You get to learn how to use all the above.
-  
+
 ***
 
 # Technology stack covered
@@ -76,10 +76,10 @@ References are spread through as we go as direct links.
 
 Code block sections will look like:
 
-    :::bash
-	# first line will denote "on REMOTE" or "on LOCAL" for clarity.
-	$ BASH commands will start with the dollar sign
-	# Code will be syntax highlighted according to language
+    #!bash
+    # first line will denote "on REMOTE" or "on LOCAL" for clarity.
+    $ BASH commands will start with the dollar sign
+    # Code will be syntax highlighted according to language
 
 &#x27a9; This symbol represents that this is a specific action that should be followed.
 
@@ -97,8 +97,8 @@ Create a root directory for your website project. This will be what we turn in t
 
 My personal system is to have a folder in my users' home directory called `dev` wherein I put one-word directories that become GitHub repos. So since my website has a DNS domain of `jamesnewbrain.com`, I created a folder at `~dev/jamesnewbrain`.
 
-    :::bash
-	# on LOCAL:
+    #!bash
+    # on LOCAL:
     $ mkdir -p ~/dev/jamesnewbrain/
 
 &#x266b; From now on, when you see `~dev/jamesnewbrain` in code blocks, please substitute with your own root directory created in this step.
@@ -115,67 +115,67 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
 
     &#x266b; We also install `python-dev` headers in case we will be compiling any python libraries that need them.
 
-        :::bash
-    	# on LOCAL:
-    	$ sudo aptitude install python-pip python-dev
+        #!bash
+        # on LOCAL:
+        $ sudo aptitude install python-pip python-dev
 	
 3. Install [`virtualenv`] [venv], the Python virtual environment management system.
 
     &#x266b; `virtualenv` allows you to compartmentalize sets of Python modules for specific projects from the globally installed modules on your entire system. This way you can have project-specific versions of modules and manage any conflicts between modules on a project-by-project basis.  It also allows you to sync your "blessed" set of Python modules from your LOCAL machine with your REMOTE machine, which we will do later in this procedure.
 
-        :::bash
-    	# on LOCAL:
-    	$ sudo pip install virtualenv
-	
+        #!bash
+        # on LOCAL:
+        $ sudo pip install virtualenv
+
 4. From now on, don't use global `pip` commands, instead use `virtualenv`
 
     &#x27a9; Create a new virtualenv Python environment in your site's project folder:
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ cd ~/dev/jamesnewbrain/
         $ virtualenv env    # can be any <environment_name>
 
         # switch to the new environment
         $ cd env
         $ source bin/activate
-        
+
     &#x266b; Thus the name of the environment is added to your cmd prompt. This lasts as long as terminal window is open (see it prefixed on the left of any command line).
     
     &#x266b; You can switch back to default python install with `$ deactivate`.
     
     &#x266b; Now can use `pip` (without `sudo`) inside of your virtual environment to install Python modules ONLY IN YOUR CURRENT PROJECT:
     
-        :::bash
-    	# on LOCAL:
-    	$ pip search <package_name>
+        #!bash
+        # on LOCAL:
+        $ pip search <package_name>
         $ pip install <package_name>
 
 5. Install the Python packages to our virtual environment we will use to generate our site.
 
     a. Install [`Pelican`] [pelican]
 
-        :::bash
-    	# on LOCAL:
-    	$ pip install pelican
+        #!bash
+        # on LOCAL:
+        $ pip install pelican
 
     b. Install [`Markdown`] [markdown] manually (the Python version).
 
-        :::bash
-    	# on LOCAL:
-    	$ pip install markdown
+        #!bash
+        # on LOCAL:
+        $ pip install markdown
 
     c. Install [`BeautifulSoup`] [beautsoup], a HTML parser, which we will use later.
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ pip install beautifulsoup4
 
     d. You can check what's installed in your virtualenv now with:
 
         :::bash
-    	# on LOCAL:
-    	$ pip freeze
+        # on LOCAL:
+        $ pip freeze
         
         Jinja2==2.7.2
         Markdown==2.3.1
@@ -193,21 +193,21 @@ Note that I referenced the following tutorials: [dabapps.com] [dabapps], [duncan
         
 6.  Save a file called `requirements.txt`, which contains the above list of Python packages installed in your virtual environment.
 
-        :::bash
-    	# on LOCAL:
-    	$ pip freeze > requirements.txt
-    	
+        #!bash
+        # on LOCAL:
+        $ pip freeze > requirements.txt
+
     &#x266b; Now you can move to any new machine and install the same Python environment quickly with:
     
-        :::bash
-    	# on LOCAL:
-    	$ pip install -r requirements.txt
+        #!bash
+        # on LOCAL:
+        $ pip install -r requirements.txt
 
     &#x266b; You can also update all the modules quickly with:
     
-        :::bash
-    	# on LOCAL:
-    	$ pip install --upgrade -r requirements.txt
+        #!bash
+        # on LOCAL:
+        $ pip install --upgrade -r requirements.txt
 
 
 ## III. Create a default [`Pelican`] [pelican] blog
@@ -216,15 +216,15 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
 1. Use the Pelican wizard, `pelican-quickstart` from your project's root directory to spin up a default Pelican blog.
 
-        :::bash
-    	# on LOCAL:
-    	$ cd ~/dev/jamesnewbrain
-    	$ pelican-quickstart
+        #!bash
+        # on LOCAL:
+        $ cd ~/dev/jamesnewbrain
+        $ pelican-quickstart
 
     &#x27a9; Walk through the wizard, answering the questions with your own answers.
 
         :::text
-    	Where do you want to create your new web site? [.] 
+        Where do you want to create your new web site? [.] 
         What will be the title of this web site? jamesnewbrain
         Who will be the author of this web site? james fallisgaard
         What will be the default language of this web site? [en] en
@@ -246,8 +246,8 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
     This is very useful to use while writing blog posts or working on your site's theme, as as soon as you save changes locally as you can see them reflected on a local version of your site just by refreshing your web browser window.
     
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ cd ~/dev/jamesnewbrain
         $ make devserver
 
@@ -259,8 +259,8 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
     
     &#x27a9; This keeps the python webserver running in a background process.  To kill this process also, run:
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ sh develop_server.sh stop
 
 3. Customize the file/folder hierarchy to meet your own design goals.
@@ -293,8 +293,8 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
 1. Create a Git repo for your project. (This is just a Git repo locally.  You will tie it to GitHub as a backup service in a later step).
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ cd ~/dev/jamesnewbrain
         $ git init
 
@@ -321,15 +321,15 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
     This will be GitHub's default readme file.
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ cd ~/dev/jamesnewbrain
         $ touch README.md
 
     &#x27a9; I started with the following:
 
         :::markdown
-    	# jamesnewbrain.com
+        # jamesnewbrain.com
 
         This is a static site generated by [Pelican](http://docs.getpelican.com/en/3.3.0/).
 
@@ -339,8 +339,8 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
     &#x27a9; Start by committing the site to a local Git repo.
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ git add .
         $ git status
         
@@ -351,12 +351,12 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
         # Changes to be committed:
         #   (use "git rm --cached <file>..." to unstage)
         #
-        #	new file:   .gitignore
-        #	new file:   Makefile
-        #	new file:   README.md
-        #	new file:   develop_server.sh
-        #	new file:   pelicanconf.py
-        #	new file:   requirements.txt
+        # new file:   .gitignore
+        # new file:   Makefile
+        # new file:   README.md
+        # new file:   develop_server.sh
+        # new file:   pelicanconf.py
+        # new file:   requirements.txt
         #
         
         $ git commit -m "Initial commit of jamesnewbrain.com"
@@ -368,14 +368,14 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
     &#x27a9; Next, add this as the `remote` repository for your local Git repo.
 
-        :::bash
+        #!bash
         # on LOCAL:
         $ git remote add origin https://github.com/jfallisg/jamesnewbrain.git
         $ git push -u origin master
 
     &#x266b; There's a chance you set this up wrong, or make the mistake that I did of copying in the SSH link instead of HTTPS, when you've previously only established credentials to sync with GitHub over HTTPS.  Audit and remediate those issues with the following:
     
-        :::bash
+        #!bash
         # on LOCAL:
         $ git remote -v         # to tell you what you have set up as remote
         $ cat .git/config       # alternative to audit your settings
@@ -383,7 +383,7 @@ I read a lot of blog posts to kind of formulate the following configuration. Che
 
     &#x27a9; Now that you have established sync with GitHub, from now on, commit changes or new blog posts to your GitHub repo with:
 
-        :::bash
+        #!bash
         # on LOCAL:
         $ cd ~/dev/jamesnewbrain
         $ git status                        # optional, check for changes
@@ -416,7 +416,7 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
 
 1. Connect to VPS
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ ssh root@your_vps_ip
 
@@ -428,14 +428,14 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
 
     a. First check default hostname:
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ hostname      # your_hostname == droplet name by default
         $ hostname -f   # your currently set FQDN, should be localhost by default
 
     b. Change FQDN to properly reflect our hostname/domain:
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ nano /etc/hosts
 
@@ -464,9 +464,9 @@ DigitalOcean will then spin up your VPS and email you your VPS's IP address, and
 
 4. Update Ubuntu on your droplet
 
-        :::bash
-    	# on REMOTE:
-    	$ aptitude update
+        #!bash
+        # on REMOTE:
+        $ aptitude update
         $ aptitude upgrade
 
 ## III. Basic security for your VPS
@@ -475,15 +475,15 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
 1. Change root password from DigitalOcean's default.
 
-        :::bash
-    	# on REMOTE:
-    	$ passwd your_new_password
+        #!bash
+        # on REMOTE:
+        $ passwd your_new_password
 
 2. Create a new username account to log in to instead of root.
 
-        :::bash
-    	# on REMOTE:
-    	$ adduser your_username
+        #!bash
+        # on REMOTE:
+        $ adduser your_username
 
     I used the same username as my local machine so I have the option to login with `$ ssh your_droplet_name.yourDNSdomain.com`.
 
@@ -491,17 +491,17 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
 3. Give sudo root privileges to this new user
 
-        :::bash
-    	# on REMOTE:
-    	$ visudo
+        #!bash
+        # on REMOTE:
+        $ visudo
 
     &#x27a9; In nano text editor, navigate to `# User privilege specification`, add a line like the one for "root" user with your new user name like `your_username ALL=(ALL:ALL) ALL`, save with ctl-x and `Y` to save.
 
 4. Configure SSH to your server to disallow root logins, and operate on a different default port.
 
-        :::bash
-    	# on REMOTE:
-    	$ nano /etc/ssh/sshd_config
+        #!bash
+        # on REMOTE:
+        $ nano /etc/ssh/sshd_config
 
     &#x27a9; change your_SSH_port `Port 22` to `Port ###` [where ### is less than 1024] [so_ports], and not 22.
 
@@ -513,15 +513,15 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
     &#x27a9; ctl-x to save and exit.
 
-        :::bash
-    	# on REMOTE:
-    	$ reload ssh
+        #!bash
+        # on REMOTE:
+        $ reload ssh
 
     &#x27a9; **before logging out of root user**, make sure everything is set up okay by opening a new Terminal window:
 
-        :::bash
-    	# on REMOTE:
-    	$ ssh -p your_SSH_port your_username@yourDNSdomain.com # if DNS has registered by now
+        #!bash
+        # on REMOTE:
+        $ ssh -p your_SSH_port your_username@yourDNSdomain.com # if DNS has registered by now
         $ ssh -p your_SSH_port your_SSH_port@your_vps_ip       # alternatively
 
     &#x27a9; If you successfully have logged in to the new user, close the terminal window that's logged in as `root`.  From now on log in as this new user whenever you connect to your VPS.
@@ -537,7 +537,7 @@ Ubuntu web server security is something I know next to nothing about, so I leane
     + public key to `/Users/your_username/.ssh/your_name_specified.pub` (which will be copied to the remote server that we want to authenticate with)
     + private key to `/Users/your_username/.ssh/your_name_specified` (which we will keep on our local machine to do authentication).
 
-            :::bash
+            #!bash
         	# on LOCAL:
         	$ ssh-keygen -t rsa -C "your_email_address"
 
@@ -547,12 +547,11 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
     b. Copy public key to the server
 
-        :::bash
-    	# on LOCAL:
-    	$ scp -P your_SSH_port ~/.ssh/your_name_specified.pub your_username@yourDNSdomain.com:
-
-    	# on REMOTE:
-    	$ mkdir .ssh
+        #!bash
+        # on LOCAL:
+        $ scp -P your_SSH_port ~/.ssh/your_name_specified.pub your_username@yourDNSdomain.com:
+        # on REMOTE:
+        $ mkdir .ssh
         $ mv your_name_specified.pub .ssh/authorized_keys
         $ chown -R your_username:your_username .ssh
         $ chmod 700 .ssh
@@ -561,8 +560,8 @@ Ubuntu web server security is something I know next to nothing about, so I leane
 
     &#x27a9; Now you can connect to your REMOTE VPS without providing a password, as long as you're connecting from the machine where you generated the SSH key with one of the following:
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ ssh -p your_SSH_port your_username@yourDNSdomain.com
         $ ssh -p your_SSH_port your_SSH_port@your_vps_ip`
     
@@ -570,14 +569,14 @@ Ubuntu web server security is something I know next to nothing about, so I leane
     
     &#x266b; Note, this will also allow you to have multiple saved SSH keys, for example if you had multiple REMOTE servers that you liked to log in to from the same LOCAL machine with different keys associated with each.
 
-        :::bash
-    	# on LOCAL:
-    	$ nano ~/.ssh/config
+        #!bash
+        # on LOCAL:
+        $ nano ~/.ssh/config
     
     &#x27a9; Now you can set up remote servers you want to connect to, each getting their own block in this file.  Use following format:
 
         :::text
-    	Host do                                    # nickname of this server
+        Host do                                    # nickname of this server
             HostName yourDNSdomain.com             # this can also be an IP address
             User your_username
             Port your_SSH_port
@@ -601,15 +600,15 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     a. Install it
     
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install fail2ban
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install fail2ban
 
     b. Copy default to local jail file
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+        #!bash
+        # on REMOTE:
+        $ sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
         $ sudo nano /etc/fail2ban/jail.local
 
     c. Modify configuration file
@@ -632,9 +631,9 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     See this DigitalOcean tutorial on [installing ufw firewall] [do_ufw].  See [this wiki page] [wiki_TCP] for what ports default to what protocol, as used in following code block.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install ufw         # if not already installed:
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install ufw         # if not already installed:
         $ sudo status                       # verify UFW is off
         $ sudo ufw default deny incoming
         $ sudo ufw default allow outgoing
@@ -646,9 +645,9 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     Turn on and verify:
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo ufw enable
+        #!bash
+        # on REMOTE:
+        $ sudo ufw enable
         $ sudo ufw status verbose
 
     &#x27a9; To get a numbered list of what rules are established: `$ sudo ufw status numbered`
@@ -659,7 +658,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     a. Install unattended-upgrades
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ sudo aptitude install unattended-upgrades
         $ sudo nano /etc/apt/apt.conf.d/10periodic
@@ -674,7 +673,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     c. Open
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
 
@@ -694,7 +693,7 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     See article at [fanclub.co.za] [fanclub] for more detail.
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ sudo nano /etc/sysctl.conf
 
@@ -706,26 +705,26 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 5. Secure shared memory
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo nano /etc/fstab
+        #!bash
+        # on REMOTE:
+        $ sudo nano /etc/fstab
 
     &#x27a9; Add following lines to the bottom of the file: `tmpfs /dev/shm tmpfs defaults,noexec,nosuid 0 0`, then ctl-x to save/exit.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo mount -a
+        #!bash
+        # on REMOTE:
+        $ sudo mount -a
 
 6. Harden network with sysctl settings
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo nano /etc/sysctl.conf
+        #!bash
+        # on REMOTE:
+        $ sudo nano /etc/sysctl.conf
 
     &#x27a9; Uncomment any of the following lines:
 
         :::text
-    	net.ipv4.conf.default.rp_filter=1
+        net.ipv4.conf.default.rp_filter=1
         net.ipv4.conf.all.rp_filter=1
         net.ipv4.tcp_syncookies=1
         net.ipv4.conf.all.accept_redirects = 0
@@ -737,23 +736,23 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     Apply the new settings with:
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ sudo sysctl -p
 
 7. Prevent IP spoofing
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo nano /etc/host.conf
+        #!bash
+        # on REMOTE:
+        $ sudo nano /etc/host.conf
 
     &#x27a9; Add following line: `nospoof on`.
 
 8. Check for rootkits with RKHunter and CHKRootKit
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install rkhunter chkrootkit
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install rkhunter chkrootkit
         $ sudo chkrootkit
         $ sudo rkhunter --update
         $ sudo rkhunter --propupd
@@ -761,18 +760,18 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 9. Analyze system log files with LogWatch
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install sendmail
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install sendmail
         $ sudo aptitude install logwatch libdate-manip-perl
         $ sudo logwatch | less
         $ sudo logwatch --mailto {your email address} --output mail --format html --range 'between -7 days and today'
 
 10. Audit system security with Tiger
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install tiger
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install tiger
         $ sudo tiger
         $ sudo less /var/log/tiger/security.report.*
 
@@ -786,8 +785,8 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
     Assuming your `/etc/init.d/nginx` is populated, which it should be with a default install of `nginx` on Ubuntu:
 
-        :::bash
-    	# on REMOTE (Ubuntu):
+        #!bash
+        # on REMOTE (Ubuntu):
         $ sudo service nginx stop
         $ sudo service nginx start
         $ sudo service nginx restart
@@ -796,13 +795,13 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 2. It will be helpful to be able to ask either your LOCAL or REMOTE machine which ports are being listened to using TCP protocol and by which processes.  This way you can verify your configurations and also see if `nginx` or the Python web servers are behaving the ways you believe.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo lsof -i -n -P | grep TCP
-    	# my LOCAL machine didn't require sudo:
-    	$ lsof -i -n -P | grep LISTEN
-    	$ lsof -i -n -P | grep TCP
-    	# if you know which specific port you want to ask for, say 8080:
+        #!bash
+        # on REMOTE:
+        $ sudo lsof -i -n -P | grep TCP
+        # my LOCAL machine didn't require sudo:
+        $ lsof -i -n -P | grep LISTEN
+        $ lsof -i -n -P | grep TCP
+        # if you know which specific port you want to ask for, say 8080:
         $ lsof -i -n -P | grep 8080
         
         # you're looking for a return like:
@@ -813,15 +812,15 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 3. Look up which IP address `nginx` is serving up websites on:
 
-        :::bash
-    	# on REMOTE:
+        #!bash
+        # on REMOTE:
         $ ifconfig eth0 | grep inet | awk '{ print $2 }'
 
 4. I found it useful also to have a quick way to search the full file system from root on for instance of a string, for example to search my REMOTE server for where all relevant directories and files dealing with `nginx` were:
 
-        :::bash
-    	# on REMOTE:
-    	$ find /. -iname "*nginx*" 2>/dev/null
+        #!bash
+        # on REMOTE:
+        $ find /. -iname "*nginx*" 2>/dev/null
 
 	&#x266b; The piping of warnings to /dev/null will mute all the inevitable warnings about permission denied on protected files.
 	
@@ -829,15 +828,15 @@ I ended up following a lot of the configurations suggested by [feross.org] [fero
 
 5. To kill `nginx` processes, get the process ID of the master process with:
 
-        :::bash
-    	# on REMOTE or LOCAL:
-    	$ ps -ax | grep nginx
+        #!bash
+        # on REMOTE or LOCAL:
+        $ ps -ax | grep nginx
 
     &#x27a9; Then kill it:
 
-        :::bash
-    	# on REMOTE or LOCAL:
-    	$ kill -s QUIT <process id>
+        #!bash
+        # on REMOTE or LOCAL:
+        $ kill -s QUIT <process id>
 
 ### Back to `nginx` configuration
 
@@ -863,27 +862,27 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
 1. Install and start [`nginx`] [nginx]
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install nginx
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install nginx
         $ sudo service nginx start      # to start nginx
         
     &#x266b; My default `nginx` version as installed by `aptitude` in Ubuntu was `nginx/1.1.19`.
 
     &#x27a9; Check `nginx` is on
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo lsof -i -n -P | grep LISTEN                 # make sure nginx is on
-    	$ ifconfig eth0 | grep inet | awk '{ print $2 }'   # which IP is it serving on?
+        #!bash
+        # on REMOTE:
+        $ sudo lsof -i -n -P | grep LISTEN                 # make sure nginx is on
+        $ ifconfig eth0 | grep inet | awk '{ print $2 }'   # which IP is it serving on?
     
     &#x27a9; Visit the IP returned in browser to see "Welcome to nginx", this is your server!
 
 2. Confirm nginx is set to start automatically with the server.
 
-        :::bash
-    	# on REMOTE:
-    	$ update-rc.d nginx defaults
+        #!bash
+        # on REMOTE:
+        $ update-rc.d nginx defaults
 
     &#x266b; If you get back `System start/stop links for /etc/init.d/nginx already exist.`, it's already going to start automatically.
 
@@ -891,8 +890,8 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
     &#x27a9; Open `nginx.conf` for editing.
 
-        :::bash
-    	# on REMOTE:
+        #!bash
+        # on REMOTE:
         $ sudo nano /etc/nginx/nginx.conf
 
     &#x27a9; Uncomment `# server_names_hash_bucket_size 64;`.
@@ -901,9 +900,9 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
 4. Customize the default `nginx` virtual hosts config.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+        #!bash
+        # on REMOTE:
+        $ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
         $ sudo nano /etc/nginx/sites-available/default
 
     &#x27a9; modify `sites-available/default` in `nano` like this:
@@ -958,38 +957,38 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
     a. Create a directory to hold new website's HTML:
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo mkdir -p /var/www/yourDNSdomain.com/public_html
+        #!bash
+        # on REMOTE:
+        $ sudo mkdir -p /var/www/yourDNSdomain.com/public_html
 
     &#x27a9; Also make a folder for the automated logs in the same area.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo mkdir -p /var/www/yourDNSdomain.com/logs
+        #!bash
+        # on REMOTE:
+        $ sudo mkdir -p /var/www/yourDNSdomain.com/logs
 
     b. Grant ownership and modification permissions.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo chown -R your_username:www-data /var/www/yourDNSdomain.com/public_html
+        #!bash
+        # on REMOTE:
+        $ sudo chown -R your_username:www-data /var/www/yourDNSdomain.com/public_html
 
     &#x27a9; Give read access to everyone.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo chmod -R 755 /var/www
+        #!bash
+        # on REMOTE:
+        $ sudo chmod -R 755 /var/www
 
     c. Create a test index.html page
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo nano /var/www/yourDNSdomain.com/public_html/index.html
+        #!bash
+        # on REMOTE:
+        $ sudo nano /var/www/yourDNSdomain.com/public_html/index.html
 
     &#x27a9; in nano, copy/paste:
 
-        :::html
-    	<html>
+        #!html
+        <html>
             <head>
                 <title>yourDNSdomain.com</title>
             </head>
@@ -1002,10 +1001,10 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
     I referenced [cbracco.me] [cbracco] some more here.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/example.com
-    	$ sudo nano /etc/nginx/sites-available/yourDNSdomain.com
+        #!bash
+        # on REMOTE:
+        $ sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/example.com
+        $ sudo nano /etc/nginx/sites-available/yourDNSdomain.com
 
     &#x27a9; Begin editing your custom virtual host config file
 
@@ -1018,7 +1017,7 @@ Basically `nginx` allows for a global server setup, and then n-number of special
     &#x266b; For an example configuration, see below:
 
         :::text
-    	...
+        ...
         server {
                 server_name www.jamesnewbrain.com;
                 
@@ -1048,9 +1047,9 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
     e. Create `global/restrictions.conf`:
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo mkdir /etc/nginx/global
+        #!bash
+        # on REMOTE:
+        $ sudo mkdir /etc/nginx/global
         $ sudo nano /etc/nginx/global/restrictions.conf
 
     &#x27a9; Edit file so that it resembles:
@@ -1086,21 +1085,21 @@ Basically `nginx` allows for a global server setup, and then n-number of special
 
     f. Activate the host by symbolically linking the specifc config you want to enable in `sites-available` w/ `sites-enabled`.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo ln -s /etc/nginx/sites-available/<yourdomain.com> /etc/nginx/sites-enabled/<yourdomain.com>
+        #!bash
+        # on REMOTE:
+        $ sudo ln -s /etc/nginx/sites-available/<yourdomain.com> /etc/nginx/sites-enabled/<yourdomain.com>
 
     g. To avoid a "conflicting server name error", delete the default `nginx` virtual host.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo rm /etc/nginx/sites-enabled/default
+        #!bash
+        # on REMOTE:
+        $ sudo rm /etc/nginx/sites-enabled/default
 
     h. Restart `nginx`
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo service nginx restart
+        #!bash
+        # on REMOTE:
+        $ sudo service nginx restart
 
 You should now be able to actually visit **yourDNSdomain.com** and see the test `index.html` we made in `nano` a few steps back.  If so, you've successfully connected the internet to a DNS lookup against yourDNSdomain.com to the IP address DigitalOcean provides your droplet to a `nginx` virtual host to an actual `*.html` file on your VPS! Good job! We'll be back to finish the job once we get your website actually building on your server in `Pelican`.
 
@@ -1108,7 +1107,7 @@ You should now be able to actually visit **yourDNSdomain.com** and see the test 
 
 &#x27a9; Install `Git` on your REMOTE VPS.
 
-    :::bash
+    #!bash
     # on REMOTE:
     $ sudo aptitude install git-core
 
@@ -1124,17 +1123,17 @@ This is going to be a pretty similar procedure to our setup on our LOCAL machine
 
     &#x266b; We also install `python-dev` headers in case we will be compiling any python libraries that need them.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo aptitude install python-pip python-dev
+        #!bash
+        # on REMOTE:
+        $ sudo aptitude install python-pip python-dev
 	
 3. Install [`virtualenv`] [venv], the Python virtual environment management system.
 
     &#x266b; Remember that `virtualenv` allows you to compartmentalize sets of Python modules for specific projects from the globally installed modules on your entire system. This way you can have project-specific versions of modules and manage any conflicts between modules on a project-by-project basis.  It also allows you to sync your "blessed" set of Python modules from your LOCAL machine with your REMOTE machine, which we will do later in this procedure.
 
-        :::bash
-    	# on REMOTE:
-    	$ sudo pip install virtualenv
+        #!bash
+        # on REMOTE:
+        $ sudo pip install virtualenv
 
 ## VIII. Make a snapshot backup of your VPS now
 
@@ -1142,9 +1141,9 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 
 &#x27a9; To take a snapshot of the droplet, you'll need to stop your droplet form the command line.
 
-    :::bash
-	# on REMOTE:
-	$ sudo shutdown -h now
+    #!bash
+    # on REMOTE:
+    $ sudo shutdown -h now
 
 &#x27a9; Now from the DigitalOcean dashboard, select to take a snapshot.  DigitalOcean will turn your server back on for you after they are done.
 
@@ -1154,7 +1153,7 @@ The timing is good for a backup snapshot of your VPS, because all the software w
     
     &#x27a9; Get the HTTPS URL for your website's GitHub repo from the GitHub website.  Mine looks like `https://github.com/jfallisg/jamesnewbrain.git`.
 
-        :::bash
+        #!bash
         # on REMOTE:
         $ mkdir ~/dev
         $ cd dev
@@ -1164,19 +1163,19 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 
     &#x27a9; To update your REMOTE repo, use:
 
-        :::bash
-    	# on REMOTE:
+        #!bash
+        # on REMOTE:
         $ cd ~/dev/jamesnewbrain
         $ git pull origin master
 
 2. Install Python environment from GitHub-synced `requirements.txt`
 
-        :::bash
-    	# on REMOTE:
-    	$ virtualenv env                   # create a Python virtualenv
-    	$ source env/bin/activate          # active our Python virtualenv
-    	$ pip install -r requirements.txt  # install our site's Python dependencies
-    	$ pip freeze                       # check how it went
+        #!bash
+        # on REMOTE:
+        $ virtualenv env                   # create a Python virtualenv
+        $ source env/bin/activate          # active our Python virtualenv
+        $ pip install -r requirements.txt  # install our site's Python dependencies
+        $ pip freeze                       # check how it went
 
 ## X. Build HTML and serve the site to the internet
 
@@ -1184,11 +1183,11 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 
     The idea here is to make a symbolic link between the contents of `~/dev/jamesnewbrain/output/`, the location `Pelican` drops the HTML that it builds, and the location `nginx` is looking to serve HTML on its webserver.
 
-        :::bash
-    	# on REMOTE:
-    	
-    	# first delete the test index.html file we made earlier
-    	$ sudo service nginx stop
+        #!bash
+        # on REMOTE:
+        
+        # first delete the test index.html file we made earlier
+        $ sudo service nginx stop
         $ sudo rm -rf /var/www/jamesnewbrain.com/public_html
         
         # make the symbolic link
@@ -1200,8 +1199,8 @@ The timing is good for a backup snapshot of your VPS, because all the software w
 
 2. You can have `Pelican` on the REMOTE server build HTML now, which will populate the `output` folder in your site's directory.
 
-        :::bash
-    	# on REMOTE:
+        #!bash
+        # on REMOTE:
         $ cd ~/dev/jamesnewbrain
         $ git pull origin master
         $ make html
@@ -1222,7 +1221,7 @@ I write blog posts in [Markdown] [markdown], a plain-text format that allows for
     
 &#x266b; Remember that `develop_server.sh` will run in a loop, detecting changes in your Pelican project (changes to config file, changes to blog post files), rebuilding the HTML automatically, and serving the site locally using the `Python` HTTP web server to [http://localhost:8000/](http://localhost:8000/).
 
-    :::bash
+    #!bash
     # on LOCAL:
     $ cd ~/dev/jamesnewbrain        # use your own projects' repo dir
     $ make devserver
@@ -1231,14 +1230,14 @@ I write blog posts in [Markdown] [markdown], a plain-text format that allows for
     
 &#x27a9; This keeps the python webserver running in a background process.  To kill this process also, run:
 
-    :::bash
+    #!bash
     # on LOCAL:
     $ sh develop_server.sh stop
 
 ## III. Commit completed post source to GitHub
 
-    :::bash
-	# on LOCAL:
+    #!bash
+    # on LOCAL:
     $ cd ~/dev/jamesnewbrain            # use your own projects' repo dir
     $ git add .
     $ git commit -m "describe changes"
@@ -1246,7 +1245,7 @@ I write blog posts in [Markdown] [markdown], a plain-text format that allows for
 
 ## IV. Deploy changes on remote server
 
-    :::bash
+    #!bash
     # on REMOTE:
     $ cd ~/dev/jamesnewbrain            # use your own projects' repo dir
     $ source env/bin/activate

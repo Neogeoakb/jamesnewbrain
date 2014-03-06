@@ -114,18 +114,18 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
 ####LANDING/HOME page####
 
     :::text
-	Header
-	
+    Header
+
 
 ####BLOG-POST####
 
     :::text
-	Header
+    Header
 
 ####ABOUT####
 
     :::text
-	Right sidebar:
+    Right sidebar:
     RSS | GitHub | twitter | LinkedIn | Flickr | Instagram | Visaul.ly
     Body:
     Photo
@@ -136,7 +136,7 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
 ####The all pages (header) template####
 
     :::text
-	@jamesnewbrain
+    @jamesnewbrain
     the online braindump of James Fallisgaard
     Right now I’m working on nksaidwhat?
     Posts & Projects | GitHub | Comics&Coffee | jamesnewwho?
@@ -179,8 +179,8 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
 
     a. Clone the Pelican themes repo locally. I took some advice from [duncanlock.net] [duncanlock2] regarding recursive cloning of the repo's submodules.
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ git clone --recursive git@github.com:getpelican/pelican-themes.git
         # now, you can pull latest changes in future with 
         $ cd pelican-themes
@@ -195,7 +195,7 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
     b. Modify your `pelicanconf.py` file by adding a `THEME` variable where you cite the path to the theme's root folder.  You can then change this path, and rebuild the HTML to see a preview of your site built with the newly selected theme.
 
         :::text
-    	THEME = '/users/yames/dev/zmisc/pelican-themes/bootstrap2'
+        THEME = '/users/yames/dev/zmisc/pelican-themes/bootstrap2'
 
 3. Once you find a good starting place, you'll want to customize the theme to your own taste.  If the design diverges enough, you'll want to actually fork the repo and commit the new theme with a new name on GitHub.
 
@@ -209,15 +209,15 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
 
     &#x27a9; Clone pelican-plugins locally, so they are available for LOCAL Pelican install to build from.
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         $ cd /users/yames/dev/zmisc
         $ git clone https://github.com/getpelican/pelican-plugins
 
     &#x27a9; Install BeautifulSoup for Python
 
-        :::bash
-    	# on LOCAL:
+        #!bash
+        # on LOCAL:
         # make sure you're in your virtualenv
         $ pip install beautifulsoup4
 
@@ -226,7 +226,7 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
     &#x27a9; Edit `pelicanconf.py`
 
         :::text
-    	PLUGIN_PATH = '/users/yames/dev/zmisc/pelican-plugins'
+        PLUGIN_PATH = '/users/yames/dev/zmisc/pelican-plugins'
         PLUGINS = ['extract_toc']
 
     &#x27a9; In an actual blogpost `*.md` document, make sure to add a line containing `[TOC]` after the metadata, before your blog post text.

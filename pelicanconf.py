@@ -41,6 +41,6 @@ NAVBAR_EXTRA_BUTTONS = [
         'url': 'http://twitter.com/jamesnewbrain'},
     {
         'name': 'Bing Bong Comics',
-        'url': 'http://jamesnewbrain.tumblr.com'},
+        'url': 'http://bingbongcomics.tumblr.com'},
 ]
 NAVBAR_ABOUT_NAME = 'james new who?'
