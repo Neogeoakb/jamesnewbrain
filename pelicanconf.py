@@ -28,8 +28,7 @@ DISQUS_SITENAME = 'jamesnewbrain'
 
 # de-Harak theme specific
 HEADER_CONTENT = {
-    'bio': """
-        <p>the online braindump of James Fallisgaard<br>currently working on <a href="./pages/nksaidwhat.html" rel="bookmark" title="Permalink to nksaidwhat">nksaidwhat</a></p> """,
+    'bio': """<p>the online braindump of James Fallisgaard""",
 }
 NAVBAR_HOME_NAME = 'Posts & Projects'
 NAVBAR_EXTRA_BUTTONS = [

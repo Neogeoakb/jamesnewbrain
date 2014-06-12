@@ -33,7 +33,7 @@ I appreciated the advice from [macdrifter.com] [macdrifter] regarding thinking t
 
 ## First, go look for inspiration
 
-Since this was the first site I had designed from scratch since a version of this blog 7 years ago, I spent a lot of time wrestling with these questions and looking for inspiration around the internet and the things around me.  
+Since this was the first site I had designed from scratch since a version of this blog 7 years ago, I spent a lot of time wrestling with these questions and looking for inspiration around the internet and the things around me.
 
 I knew my basic goals for the site were to serve as a portfolio and process blog for my programming and data science projects, but I also wanted the site to reflect my personality. I combed through coding blogs looking for what I'll call "best-practices" for similar portfolio/process-blogs, I looked at designer and artists personal sites too to get some inspiration from people who should have a better visual eye than the programmers, and I looked at a lot of printed objects, comics, art-books or book covers, magazines, as these are typically my most frequent source of resonant inspiration anyway.
 
@@ -53,7 +53,7 @@ Before touching any code, I wanted to have a firm idea of what the theme design 
     + Do I want special treatment of Table of Contents?
     + Any dynamic javascript I'll want to implement in the actual theme for functionality like fancy scrolling, or searching, or anything else?
 2. What do I want the site to look like?
-    + Color scheme? 
+    + Color scheme?
     + Typography?
     + Sidebars, headers, footers?
     + Width, responsive design?
@@ -182,14 +182,14 @@ Since I consolidated down to 4 basic page-types above, I will show some rough no
         #!bash
         # on LOCAL:
         $ git clone --recursive git@github.com:getpelican/pelican-themes.git
-        # now, you can pull latest changes in future with 
+        # now, you can pull latest changes in future with
         $ cd pelican-themes
         $ git pull --recurse-submodules
 
     b. Start your Pelican devserver with `make devserver` in your Pelican site's root directory.
-    
+
     &#x266b; By keeping this running in the background, as you change your Pelican configuration settings and point to different themes, Pelican will rebuild your site's local HTML automatically upon modifying any files, so you can just refresh your web browser and see the changes.
-    
+
     &#x27a9; Don't forget to end the process you have to not only `ctl-c` to get a command line, but then `sh develop_server.sh stop` to actually stop the background Python webserver process.
 
     b. Modify your `pelicanconf.py` file by adding a `THEME` variable where you cite the path to the theme's root folder.  You can then change this path, and rebuild the HTML to see a preview of your site built with the newly selected theme.
