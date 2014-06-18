@@ -1,6 +1,6 @@
 Title: data visualization portfolio
 Date: 2014-06-12 15:31
-Modified: 2014-06-12 16:12
+Modified: 2014-06-18 12:45
 Slug: portfolio
 disqus_identifier: portfolio
 Author: James Fallisgaard
@@ -10,7 +10,25 @@ Summary:
 # Data visualization portfolio
 
 <br>
+
+While I'm productive with many software tools and workflows, I typically work in the following open source data science software stack:
+
+- Workflow pipeline using git, bash scripts and gnu make
+- Data acquisition in Python
+- Data warehouse using MongoDB, interfaced through PyMongo
+- Data manipulation and statistical analysis in Python and Octave/Matlab
+- Data visualizations built in D3.js
+
 <br>
+
+### Work in progress
+
+**interactive choropleth of North Korean international relations over time** *- see [source here.](https://github.com/jfallisg/nkir)*
+<a href="https://www.flickr.com/photos/jamesnewbrain/14266042187" title="WIP - D3.js interactive choropleth by James Fallisgaard, on Flickr"><img src="https://farm6.staticflickr.com/5194/14266042187_5365a48af4_o.png" width="1676" height="1866" alt="WIP - D3.js interactive choropleth"></a>
+
+<br>
+
+***
 
 ## as a Product Engineer at *[Impinj](http://impinj.com)*:
 
