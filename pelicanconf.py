@@ -44,8 +44,9 @@ NAVBAR_EXTRA_BUTTONS = [
 ]
 NAVBAR_ABOUT_NAME = 'james new who?'
 
-STATIC_PATHS = ['extras/favicon.ico']
+STATIC_PATHS = ['extras/favicon.ico', 'extras/james_fallisgaard_resume.pdf']
 
 EXTRA_PATH_METADATA = {
     'extras/favicon.ico': {'path': 'favicon.ico'},
+    'extras/james_fallisgaard_resume.pdf': {'path': 'james_fallisgaard_resume.pdf'},
 }
