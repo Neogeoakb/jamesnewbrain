@@ -5,7 +5,7 @@ Slug: portfolio
 disqus_identifier: portfolio
 Author: James Fallisgaard
 Template: nkodp
-URL: portfolio
+URL: portfolio.html
 save_as: portfolio.html
 Summary:
 
