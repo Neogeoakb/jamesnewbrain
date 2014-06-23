@@ -5,6 +5,8 @@ Slug: portfolio
 disqus_identifier: portfolio
 Author: James Fallisgaard
 Template: nkodp
+URL: portfolio
+save_as: portfolio.html
 Summary:
 
 # Data visualization portfolio

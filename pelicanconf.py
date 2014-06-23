@@ -43,3 +43,9 @@ NAVBAR_EXTRA_BUTTONS = [
         'url': 'http://bingbongcomics.tumblr.com'},
 ]
 NAVBAR_ABOUT_NAME = 'james new who?'
+
+STATIC_PATHS = ['extras/favicon.ico']
+
+EXTRA_PATH_METADATA = {
+    'extras/favicon.ico': {'path': 'favicon.ico'},
+}
