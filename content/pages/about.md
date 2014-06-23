@@ -8,7 +8,7 @@ Template: about
 
 ## bio
 
-Hey guys, my name is James Fallisgaard.  Welcome to my site! 
+Hey guys, my name is James Fallisgaard.  Welcome to my site!
 
 I'm a data scientist currently doing freelance consulting out of Bushwick, Brooklyn, NY.
 
@@ -23,6 +23,14 @@ I grew up in Seattle, where I lived for the first 26 years of my life (except fo
 <span class="icon" markdown="1"><a href="http://instagram.com/jfallisg" title="Instagram"><i class="fa fa-instagram"></i> Instagram</a></span>
 <span class="icon" markdown="1"><i class="fa fa-coffee"></i> email jamesfallisgaard at gmail</span>
 </div>
+
+## resume
+
+Download [pdf here] [resume].
+
+<embed src="http://jamesnewbrain.com/james_fallisgaard_resume.pdf#view=FitH" width="840px" height="1080px">
+
+<br>
 
 <div class="aboutsection" markdown="1">
 
@@ -50,6 +58,8 @@ It feels like I came to the world of software development and data science throu
             "University of Washington - MSE"
 [uw-bpc]:   http://www.foster.washington.edu/centers/entrepreneurship/businessplancompetition/Pages/BPC.aspx
             "University of Washington - Business Plan Competition"
+[resume]:   http://jamesnewbrain.com/james_fallisgaard_resume.pdf
+            "James Fallisgaard Resume"
 [tw]:       http://www.barebones.com/products/textwrangler/
             "TextWrangler"
 [nv]:       http://brettterpstra.com/projects/nvalt/
